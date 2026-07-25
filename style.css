@@ -1,0 +1,87 @@
+:root{--ink:#183b3a;--cream:#fff8e9;--coral:#ff795f;--sun:#ffc34c;--teal:#1d8177}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#f7ead0;color:var(--ink);font-family:"M PLUS Rounded 1c",sans-serif}
+body{overflow-x:hidden;background-image:radial-gradient(#e7ceb0 1px,transparent 1px);background-size:18px 18px}
+button,a{-webkit-tap-highlight-color:transparent}
+.game-shell{width:min(1460px,100%);margin:auto;min-height:100vh;background:var(--cream);box-shadow:0 0 60px #7f67432b;display:flex;flex-direction:column}
+.topbar{height:72px;padding:0 clamp(18px,4vw,56px);display:flex;align-items:center;justify-content:space-between;background:#fffaf0;border-bottom:2px solid #eadabd;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font-family:"Hachi Maru Pop";font-size:clamp(17px,2vw,24px)}
+.paw{display:grid;place-items:center;width:38px;height:38px;background:var(--coral);border-radius:50%;font-size:20px}
+.icon-btn{width:40px;height:40px;border:2px solid var(--ink);border-radius:50%;background:transparent;color:var(--ink);font-size:21px;font-weight:900;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+.icon-btn.off{opacity:.35;text-decoration:line-through}
+.stage-wrap{position:relative;flex:1;min-height:0;overflow:hidden;background:#93d7c4;isolation:isolate}
+canvas{display:block;width:100%;height:auto;max-height:calc(100vh - 128px);aspect-ratio:16/9;object-fit:cover}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:linear-gradient(90deg,#fff8e9ed 0%,#fff8e9b8 42%,transparent 74%),url("assets/tart-adventure-bg.png") center/cover;color:var(--ink);transition:.35s}
+.splash-screen{background:linear-gradient(#fff8e952,#fff8e952),url("assets/tart-adventure-bg.png") center/cover}
+.splash-btn{transform:scale(1.15);box-shadow:0 10px 0 #0c2928,0 18px 35px #183b3a69}
+.splash-btn:hover{transform:scale(1.15) translateY(-3px)}
+.hidden{opacity:0!important;pointer-events:none!important;visibility:hidden}
+.start-screen{align-items:flex-start;text-align:left;padding-left:clamp(24px,8vw,110px)}
+.eyebrow{margin:0 0 10px;color:#c54c3a;letter-spacing:.22em;font-size:12px;font-weight:900}
+h1{margin:0;font-family:"Hachi Maru Pop";line-height:.9;filter:drop-shadow(4px 5px 0 #fff)}
+h1 span{display:block;font-size:clamp(33px,5vw,68px)}
+h1 strong{display:block;color:var(--coral);font:900 clamp(64px,9vw,126px)/1 "M PLUS Rounded 1c",sans-serif;letter-spacing:.02em;transform:rotate(-1deg);-webkit-text-stroke:1px #fff8e9;text-shadow:4px 5px 0 #f3b83d}
+.sequel{display:inline-grid;place-items:center;width:.72em;height:.72em;margin-left:.12em;border-radius:50%;background:#ffc34c;color:#183b3a;font:900 .66em/1 "M PLUS Rounded 1c",sans-serif;letter-spacing:0;vertical-align:.1em;-webkit-text-stroke:0;box-shadow:0 0 0 3px #fff8e9,3px 4px 0 #183b3a;transform:rotate(5deg)}
+.intro{font-size:clamp(13px,1.5vw,18px);line-height:1.9;margin:14px 0 18px;max-width:560px}
+.primary-btn{display:flex;align-items:center;gap:22px;padding:8px 9px 8px 26px;border:0;border-radius:999px;background:var(--ink);color:#fff;font:800 16px inherit;cursor:pointer;box-shadow:0 8px 0 #0c2928,0 14px 25px #183b3a4c;transition:.15s}
+.primary-btn:hover{transform:translateY(-3px);box-shadow:0 11px 0 #0c2928,0 17px 28px #183b3a4c}
+.primary-btn:active{transform:translateY(5px);box-shadow:0 3px 0 #0c2928}
+.primary-btn b{display:grid;place-items:center;width:42px;height:42px;background:var(--coral);border-radius:50%;font-size:21px}
+.controls-hint{font-size:12px;margin:16px 0 0;color:#51706d}
+kbd{display:inline-grid;place-items:center;min-width:28px;height:25px;padding:0 6px;background:#fff;border:1px solid #b5afa1;border-radius:6px;box-shadow:0 2px #afa798;font:800 11px inherit}
+.hero-dog-photo{position:absolute;right:2%;bottom:-7%;width:min(51vw,660px);aspect-ratio:1;object-fit:cover;border-radius:50%;border:10px solid #fff8e9;box-shadow:0 20px 50px #65452d52;transform:rotate(3deg)}
+.dog-body{position:absolute;bottom:8px;left:35px;width:165px;height:155px;border-radius:50% 55% 42% 46%;background:radial-gradient(circle at 50% 40%,#fff5d7 0 30%,#e9ae58 62%,#b96e35);box-shadow:inset -15px -12px 0 #c47b3c}
+.dog-head{position:absolute;z-index:2;top:10px;left:28px;width:185px;height:175px;border-radius:48% 52% 48% 46%;background:radial-gradient(circle at 48% 42%,#fff9e7 0 22%,#efbd72 52%,#c97e3d 82%);box-shadow:inset 0 -12px 0 #d68d44}
+.ear{position:absolute;top:-9px;width:67px;height:79px;background:#bd7138;clip-path:polygon(50% 0,100% 100%,0 84%);z-index:-1}.ear.left{left:8px;transform:rotate(-17deg)}.ear.right{right:6px;transform:rotate(18deg)}
+.face:before,.face:after{content:"";position:absolute;top:66px;width:14px;height:19px;border-radius:50%;background:#183b3a}.face:before{left:52px}.face:after{right:52px}
+.muzzle{position:absolute;left:62px;top:81px;width:64px;height:54px;border-radius:50%;background:#fff7e7}
+.muzzle:before{content:"";position:absolute;left:23px;top:6px;width:20px;height:14px;border-radius:50% 50% 60% 60%;background:#2b342f}
+.muzzle:after{content:"";position:absolute;left:27px;top:23px;width:15px;height:13px;border-radius:0 0 50% 50%;background:#ed776a}
+.dog-tail{position:absolute;right:-5px;bottom:64px;width:100px;height:120px;border:30px solid #d98d47;border-left-color:transparent;border-bottom-color:transparent;border-radius:50%;transform:rotate(30deg)}
+.scarf{position:absolute;z-index:3;left:55px;top:156px;width:135px;height:26px;background:var(--teal);border-radius:50%}.scarf:after{content:"";position:absolute;right:-15px;top:10px;width:58px;height:25px;background:var(--teal);transform:rotate(25deg);clip-path:polygon(0 0,100% 48%,10% 100%)}
+.hud{position:absolute;z-index:4;inset:20px 24px auto;display:flex;gap:12px;align-items:center;transition:.3s}
+.hud-pill{height:44px;display:flex;align-items:center;gap:9px;padding:0 16px;background:#fffaf0e8;border:2px solid #fff;border-radius:99px;box-shadow:0 5px 16px #16484229;font-weight:900}
+.hud-pill:first-child{color:#e2504b}.mini-tart{font-size:23px}.collect-pill span{font-size:22px}.collect-pill small{color:#8a887f}.stage-label{margin-left:auto;color:var(--teal)}
+.toast{position:absolute;z-index:6;left:50%;top:80px;transform:translateX(-50%);padding:10px 22px;border-radius:99px;background:var(--ink);color:#fff;font-weight:900;transition:.2s;box-shadow:0 8px 20px #183b3a55}
+.overlay.end-screen{align-items:flex-start;background:linear-gradient(90deg,#102f2dcc 0%,#102f2d9c 38%,#102f2d28 70%,transparent 100%),url("assets/ending-photo.png") center/cover;padding-left:5vw}
+.end-screen h2{font-family:"Hachi Maru Pop";font-size:clamp(36px,6vw,72px);margin:0;color:#ffb05e;text-shadow:3px 4px 0 #173f3d}
+.end-screen>.eyebrow{color:#ffe3a7}.end-screen p{line-height:1.8}.end-medal{font-size:70px;filter:drop-shadow(0 5px 0 #6b4a17)}
+.end-screen #endMessage{color:#fff8e9;text-shadow:2px 2px 0 #173f3d}
+.credits-window{width:min(700px,54vw);height:145px;overflow:hidden;position:relative;margin:6px 0;background:#fff8e9e8;border:3px solid #f0c87f;border-radius:22px;box-shadow:inset 0 0 22px #e5b95e38,0 7px 20px #183b3a52;mask-image:linear-gradient(transparent,#000 14% 86%,transparent)}
+.credits-roll{color:#173f3d;font:800 clamp(17px,2vw,25px)/1.65 "Hachi Maru Pop","M PLUS Rounded 1c",sans-serif;text-align:center;animation:creditsFlow 14s linear both}
+.credits-roll p{margin:0 0 22px;white-space:nowrap;text-shadow:2px 2px 0 #fff,3px 3px 0 #f0c87f}
+.end-screen.hidden .credits-roll{animation:none}
+@keyframes creditsFlow{0%{transform:translateY(150px);opacity:0}6%{opacity:1}88%{opacity:1}100%{transform:translateY(-185px);opacity:0}}
+.mobile-controls{display:none;position:absolute;z-index:7;left:18px;right:18px;bottom:16px;justify-content:space-between;pointer-events:none}
+.mobile-controls button{pointer-events:auto;width:62px;height:62px;border:2px solid #fff;border-radius:50%;background:#183b3ad1;color:#fff;font-size:25px;font-weight:900;box-shadow:0 5px 12px #183b3a48;touch-action:none}
+.mobile-controls .attack{background:#f4a62bde;margin-left:auto}.mobile-controls .jump{background:#ff795fe8;margin-left:12px}.jump small,.attack small{display:block;font-size:7px;letter-spacing:.1em}
+footer{min-height:56px;padding:0 clamp(18px,4vw,56px);display:flex;align-items:center;justify-content:space-between;gap:18px;font-size:11px;color:#617976;background:#fffaf0;border-top:2px solid #eadabd}
+.rotate-notice{display:none}
+.legend{white-space:nowrap}.dot{display:inline-block;width:9px;height:9px;border-radius:50%}.coral{background:var(--coral)}.teal{background:var(--teal)}
+@media(max-width:950px) and (orientation:landscape){html,body{width:100%;height:100%;overflow:hidden}.topbar,footer{display:none}.game-shell,.stage-wrap{width:100vw;height:100dvh;min-height:100dvh;max-height:100dvh}.stage-wrap{position:fixed;inset:0}.overlay{background:linear-gradient(90deg,#fff8e9eb 0 47%,transparent 76%),url("assets/tart-adventure-bg.png") center/cover}.start-screen{padding:8px max(4vw,env(safe-area-inset-left))}.start-screen h1 span{font-size:24px}.start-screen h1 strong{font-size:50px}.eyebrow{font-size:8px;margin-bottom:3px}.intro{font-size:10px;line-height:1.45;margin:5px 0 8px;max-width:430px}.primary-btn{font-size:12px;padding:6px 7px 6px 18px}.primary-btn b{width:30px;height:30px}.hero-dog-photo{width:min(37vw,42dvh);right:max(3%,env(safe-area-inset-right));bottom:-18%;border-width:5px}.mobile-controls{display:flex;left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));bottom:max(7px,env(safe-area-inset-bottom))}.mobile-controls button{width:52px;height:52px;font-size:21px}.controls-hint{display:none}canvas{width:100vw;height:100dvh;max-height:none;object-fit:contain;background:#3e9f92}.hud{inset:max(6px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) auto max(10px,env(safe-area-inset-left))}.hud-pill{height:32px;padding:0 10px;font-size:12px}.collect-pill span{font-size:17px}.stage-label{display:none}}
+@media(max-width:950px) and (orientation:portrait){.topbar,footer,.overlay,.hud,.mobile-controls,canvas{display:none!important}.stage-wrap{position:fixed;inset:0;background:linear-gradient(#ffb37e,#ffe5b6)}.rotate-notice{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:var(--ink)}.rotate-notice span{font-size:78px;color:var(--coral);animation:rotatePhone 1.8s ease-in-out infinite}.rotate-notice strong{font-size:24px}.rotate-notice small{color:#775f4a}@keyframes rotatePhone{50%{transform:rotate(90deg)}}}
+@media(max-width:950px) and (orientation:landscape){
+  .splash-screen{background:linear-gradient(#fff8e938,#fff8e938),url("assets/tart-adventure-bg.png") center/cover;padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}
+  .end-screen{padding:max(6px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+  .end-screen .eyebrow{display:none}.end-screen h2{font-size:clamp(28px,9dvh,42px)}.end-medal{font-size:34px}.credits-window{height:105px;margin:1px 0}.credits-roll{font-size:16px}.credits-roll p{margin-bottom:16px}.end-screen #endMessage{font-size:10px;margin:2px 0;line-height:1.3}
+  .start-screen{
+    justify-content:center;
+    padding-top:max(14px,env(safe-area-inset-top));
+    padding-bottom:max(14px,env(safe-area-inset-bottom));
+    padding-left:max(5vw,env(safe-area-inset-left));
+    padding-right:max(5vw,env(safe-area-inset-right));
+  }
+  .start-screen .eyebrow,.start-screen h1,.start-screen .intro,.start-screen .primary-btn{position:relative;z-index:2;max-width:48vw}
+  .start-screen h1 span{font-size:clamp(24px,8dvh,34px)}
+  .start-screen h1 strong{font-size:clamp(54px,18dvh,82px)}
+  .start-screen .intro{font-size:clamp(9px,2.8dvh,12px);margin:clamp(4px,1.5dvh,9px) 0}
+  .hero-dog-photo{width:min(42vw,78dvh);right:max(3vw,env(safe-area-inset-right));bottom:-3%;border-width:5px}
+}
+@media(max-width:950px) and (orientation:landscape) and (max-height:420px){
+  .start-screen{padding-left:max(6vw,env(safe-area-inset-left));padding-right:max(6vw,env(safe-area-inset-right))}
+  .start-screen .eyebrow{display:none}
+  .start-screen h1 span{font-size:22px}
+  .start-screen h1 strong{font-size:52px}
+  .start-screen .intro{font-size:9px;line-height:1.35;max-width:43vw}
+  .hero-dog-photo{width:min(38vw,70dvh);right:max(5vw,env(safe-area-inset-right));bottom:0}
+}

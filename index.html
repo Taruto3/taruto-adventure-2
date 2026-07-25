@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ff795f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="たるとの大冒険2">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>たるとの大冒険2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="タイトルへ">
+        <span class="paw">🐾</span>
+        <span>たるとの大冒険2</span>
+      </a>
+      <button id="soundBtn" class="icon-btn" aria-label="音を切り替える">♪</button>
+    </header>
+
+    <section class="stage-wrap">
+      <canvas id="game" width="1280" height="720" aria-label="たるとの大冒険2 ゲーム画面"></canvas>
+
+      <div id="hud" class="hud hidden">
+        <div class="hud-pill"><span class="mini-tart">🐶</span><span id="lives">♥ ♥ ♥</span></div>
+        <div class="hud-pill collect-pill"><span>🥕</span><b id="carrotScore">0</b><small>/ 5</small></div>
+        <div class="hud-pill collect-pill"><span>🦴</span><b id="boneScore">0</b><small>/ 3</small></div>
+        <div class="hud-pill stage-label">はなの丘</div>
+      </div>
+
+      <section id="startScreen" class="overlay splash-screen">
+        <button id="startBtn" class="primary-btn splash-btn"><span>スタート</span><b>→</b></button>
+      </section>
+
+      <section id="storyScreen" class="overlay start-screen hidden">
+        <p class="eyebrow">A LITTLE FLUFFY ADVENTURE</p>
+        <h1><span>たるとの</span><strong>大冒険<i class="sequel">2</i></strong></h1>
+        <img class="hero-dog-photo" src="assets/taruto-character-v3.png" alt="にんじんのぬいぐるみをくわえて走る淡いクリーム色のポメラニアン、たると">
+        <p class="intro">おうちを出発した<strong>たると</strong>。花の丘に散らばった、大好きなにんじんトイと骨を集めながら、とーちゃんとかーちゃんが待つゴールを目指します。</p>
+        <button id="storyBtn" class="primary-btn"><span>冒険へ出発！</span><b>→</b></button>
+        <p class="controls-hint">自動で走るよ！　 <kbd>SPACE</kbd> ジャンプ　 <kbd>X</kbd> 回し蹴り</p>
+      </section>
+
+      <section id="endScreen" class="overlay end-screen hidden">
+        <p class="eyebrow">ADVENTURE COMPLETE!</p>
+        <h2>やったね、たると！</h2>
+        <div class="end-medal">☀</div>
+        <div class="credits-window" aria-label="エンディングメッセージ">
+          <div class="credits-roll">
+            <p>大好きなとーちゃんとかーちゃんが待ってたよ</p>
+            <p>今夜のごはんは何だろうな</p>
+            <p>たるとの戦いはまだまだ続く</p>
+          </div>
+        </div>
+        <p id="endMessage"></p>
+        <button id="retryBtn" class="primary-btn"><span>もういちど遊ぶ</span><b>↻</b></button>
+      </section>
+
+      <div id="toast" class="toast hidden">にんじんトイをみつけた！</div>
+
+      <div class="mobile-controls" aria-label="スマートフォン用操作">
+        <button data-key="attack" class="attack" aria-label="くるん回し蹴り">⚡<small>KICK</small></button>
+        <button data-key="jump" class="jump" aria-label="ジャンプ">↑<small>JUMP</small></button>
+      </div>
+      <div class="rotate-notice"><span>↻</span><strong>スマホを横にしてね</strong><small>たるとが待っているよ！</small></div>
+    </section>
+
+    <footer>
+      <span>にんじんトイと骨を集めて、とーちゃんとかーちゃんの待つゴールへ！</span>
+      <span class="legend">🥕 にんじんトイ　 🦴 骨　 <i class="dot teal"></i> ゴール</span>
+    </footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
