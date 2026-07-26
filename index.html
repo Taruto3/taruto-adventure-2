@@ -27,12 +27,13 @@
 
     <section class="stage-wrap">
       <canvas id="game" width="1280" height="720" aria-label="たるとの大冒険2 ゲーム画面"></canvas>
+      <div id="highScoreBadge" class="high-score-badge" aria-live="polite"><small>BEST</small><b id="highScoreValue">0</b></div>
 
       <div id="hud" class="hud hidden">
         <div class="hud-pill"><span class="mini-tart">🐶</span><span id="lives">♥ ♥ ♥</span></div>
-        <div class="hud-pill collect-pill"><span>🥕</span><b id="carrotScore">0</b><small>/ 5</small></div>
-        <div class="hud-pill collect-pill"><span>🦴</span><b id="boneScore">0</b><small>/ 3</small></div>
-        <div class="hud-pill stage-label">はなの丘</div>
+        <div class="hud-pill score-pill"><small>SCORE</small><b id="scoreValue">0</b></div>
+        <div class="hud-pill time-pill"><small>TIME</small><b id="timeValue">240.0</b></div>
+        <div class="hud-pill stage-label">たるとの道</div>
       </div>
 
       <section id="startScreen" class="overlay splash-screen">
@@ -43,7 +44,11 @@
         <p class="eyebrow">A LITTLE FLUFFY ADVENTURE</p>
         <h1><span>たるとの</span><strong>大冒険<i class="sequel">2</i></strong></h1>
         <img class="hero-dog-photo" src="assets/taruto-character-v3.png" alt="にんじんのぬいぐるみをくわえて走る淡いクリーム色のポメラニアン、たると">
-        <p class="intro">おうちを出発した<strong>たると</strong>。花の丘に散らばった、大好きなにんじんトイと骨を集めながら、とーちゃんとかーちゃんが待つゴールを目指します。</p>
+        <div class="intro story-copy">
+          <p>今日はとーちゃんとかーちゃんが、ふたりでおでかけ。<br>ぼくはおうちで、ひとりでお留守番。</p>
+          <p>でも、さみしくなってふたりを探しに行くことにしました。<br>道にはぼくの嫌いなのらねことカラスがいっぱい！</p>
+          <p>大好きなカモさんに協力してもらいながら、無事にゴールへ着けるかな？<br>ゴールでは、とーちゃんとかーちゃんが待ってるよ。</p>
+        </div>
         <button id="storyBtn" class="primary-btn"><span>冒険へ出発！</span><b>→</b></button>
         <p class="controls-hint">自動で走るよ！　 <kbd>SPACE</kbd> ジャンプ　 <kbd>X</kbd> 回し蹴り</p>
       </section>
@@ -51,7 +56,30 @@
       <section id="endScreen" class="overlay end-screen hidden">
         <p class="eyebrow">ADVENTURE COMPLETE!</p>
         <h2>やったね、たると！</h2>
+        <div id="newRecord" class="new-record hidden" role="status">
+          <span>★</span><strong>NEW HIGH SCORE!</strong><span>★</span>
+        </div>
+        <div id="cheeseHandoff" class="cheese-handoff hidden" aria-label="たるとがとーちゃんとかーちゃんにチーズを渡す">
+          <span class="handoff-taruto">🐶</span>
+          <span class="handoff-cheese">🧀</span>
+          <span class="handoff-parents">👨‍👩‍👦</span>
+          <strong>チーズのおみやげ、どうぞ！</strong>
+        </div>
         <div class="end-medal">☀</div>
+        <div class="score-summary" aria-label="スコア集計">
+          <div class="score-breakdown">
+            <div><span>にんじんトイ <em id="carrotCount">0個</em></span><b id="carrotScore">0</b></div>
+            <div><span>ホネッコ <em id="boneCount">0個</em></span><b id="boneScore">0</b></div>
+            <div><span>野良ねこ <em id="catCount">0匹</em></span><b id="catScore">0</b></div>
+            <div><span>カラス <em id="crowCount">0羽</em></span><b id="crowScore">0</b></div>
+            <div><span>カモさんジャンプ <em id="duckCount">0回</em></span><b id="duckScore">0</b></div>
+            <div><span>おみやげチーズ <em id="cheeseCount">0個</em></span><b id="cheeseScore">0</b></div>
+            <div class="penalty-row"><span>ダメージ減点 <em id="damageCount">0回</em></span><b id="damageScore">0</b></div>
+          </div>
+          <div><span>アクション・アイテム</span><b id="actionScore">0</b></div>
+          <div><span>タイムボーナス（残り0.1秒×1）</span><b id="timeBonus">0</b></div>
+          <div class="score-total"><span>TOTAL SCORE</span><strong id="totalScore">0</strong></div>
+        </div>
         <div class="credits-window" aria-label="エンディングメッセージ">
           <div class="credits-roll">
             <p>大好きなとーちゃんとかーちゃんが待ってたよ</p>
@@ -59,7 +87,6 @@
             <p>たるとの戦いはまだまだ続く</p>
           </div>
         </div>
-        <p id="endMessage"></p>
         <button id="retryBtn" class="primary-btn"><span>もういちど遊ぶ</span><b>↻</b></button>
       </section>
 

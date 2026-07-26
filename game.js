@@ -2,26 +2,59 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const $ = s => document.querySelector(s);
 const bg = new Image(); bg.src = "assets/tart-adventure-bg.png";
+const bgm = new Audio("assets/flowerbed-fields.ogg"); bgm.loop=true; bgm.volume=.2;
+const HIGH_SCORE_KEY="taruto-adventure-2-high-score";
 
-const W = 1280, H = 720, worldW = 4200, groundY = 590, goalX = 3870;
-const riverZones=[{x:700,w:500},{x:1700,w:550},{x:2600,w:900}];
-let running=false, won=false, last=0, camera=0, carrots=0, bones=0, lives=3, sound=true, toastTimer;
+function loadHighScore(){
+  try{return Math.max(0,Number(localStorage.getItem(HIGH_SCORE_KEY))||0)}
+  catch(_){return 0}
+}
+function saveHighScore(value){
+  try{localStorage.setItem(HIGH_SCORE_KEY,String(value))}catch(_){}
+}
+let highScore=loadHighScore();
+
+const W=1280,H=720,groundY=590,SEGMENT=4000,worldW=8800,goalX=8480,RUN_TIME=240;
+const baseRivers=[{x:700,w:500},{x:1700,w:550},{x:2600,w:900}];
+const finalRiver={x:8138,w:242,respawnX:7440};
+const riverZones=[...baseRivers,...baseRivers.map(r=>({...r,x:r.x+SEGMENT})),finalRiver];
+let running=false,won=false,last=0,camera=0,carrots=0,bones=0,catsDefeated=0,crowsDefeated=0,duckJumps=0,damageCount=0,cheeseTaken=false,lives=3,score=0,timeLeft=RUN_TIME*10,endTime=0,sound=true,toastTimer;
 const keys={jump:false,attack:false};
 let player={x:150,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
-const platforms=[
+const basePlatforms=[
   {x:0,y:590,w:700,h:130},{x:1200,y:590,w:500,h:130},{x:2250,y:590,w:350,h:130},
   {x:3500,y:590,w:700,h:130},
   {x:620,y:470,w:250,h:28},{x:900,y:380,w:250,h:28},{x:1140,y:470,w:150,h:28},
   {x:1620,y:460,w:250,h:28},{x:1900,y:350,w:250,h:28},{x:2140,y:455,w:160,h:28},
   {x:2520,y:470,w:240,h:28},{x:2780,y:385,w:240,h:28},{x:3040,y:300,w:240,h:28},{x:3300,y:410,w:240,h:28}
 ];
-let items=[], enemies=[], ducks=[];
+const goalSteps=[
+  {x:7550,y:530,w:84,h:60,goalStep:true},{x:7634,y:470,w:84,h:120,goalStep:true},
+  {x:7718,y:410,w:84,h:180,goalStep:true},{x:7802,y:350,w:84,h:240,goalStep:true},
+  {x:7886,y:290,w:252,h:300,goalStep:true},{x:8380,y:590,w:420,h:130}
+];
+const duckJumpWall={x:5200,y:300,w:110,h:290,goalStep:true,duckWall:true};
+const fieldBlocks=[
+  {x:3500,y:500,w:72,h:90,goalStep:true},{x:3716,y:525,w:72,h:65,goalStep:true},
+  {x:3932,y:475,w:72,h:115,goalStep:true},{x:4148,y:550,w:72,h:40,goalStep:true},
+  {x:4364,y:450,w:72,h:140,goalStep:true}
+];
+const secondPlatforms=basePlatforms
+  .filter(p=>p.y===groundY||![620,900,1140].includes(p.x))
+  .map(p=>({...p,x:p.x+SEGMENT}));
+const platforms=[...basePlatforms,...secondPlatforms,...fieldBlocks,duckJumpWall,...goalSteps];
+let items=[], enemies=[], ducks=[],splashes=[];
+let cheese={x:8260,y:430,w:54,h:42,taken:false};
 
 function reset(){
   player={x:190,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
-  camera=0; carrots=0; bones=0; lives=3; won=false;
-  items=[[720,415,"carrot"],[995,325,"bone"],[1320,535,"carrot"],[1740,405,"carrot"],[2010,295,"bone"],[2360,535,"carrot"],[2810,330,"bone"],[3070,245,"carrot"]].map(([x,y,type])=>({x,y,type,taken:false,bob:Math.random()*6}));
-  enemies=[
+  $("#newRecord").classList.add("hidden");
+  camera=0;carrots=0;bones=0;catsDefeated=0;crowsDefeated=0;duckJumps=0;damageCount=0;splashes=[];cheeseTaken=false;cheese={x:8260,y:430,w:54,h:42,taken:false};lives=3;score=0;timeLeft=RUN_TIME*10;endTime=performance.now()+RUN_TIME*1000;won=false;
+  const baseItems=[[720,415,"carrot"],[995,325,"bone"],[1320,535,"carrot"],[1740,405,"carrot"],[2010,295,"bone"],[2360,535,"carrot"],[2810,330,"bone"],[3070,245,"carrot"]];
+  items=[...baseItems,...baseItems.map(([x,y,type])=>[x+SEGMENT,y,type])]
+    .filter(([x,,type])=>type!=="carrot"||![1320,5740,7070].includes(x))
+    .map(([x,y,type])=>({x,y,type,taken:false,bob:Math.random()*6}));
+  const baseEnemies=[
     {type:"cat",x:540,y:535,min:420,max:650,v:1.25,alive:true},
     {type:"crow",x:1040,y:315,min:900,max:1130,v:1.7,alive:true,phase:0},
     {type:"cat",x:1510,y:535,min:1300,max:1640,v:1.15,alive:true},
@@ -29,13 +62,17 @@ function reset(){
     {type:"cat",x:2470,y:535,min:2340,max:2560,v:1.25,alive:true},
     {type:"crow",x:3100,y:275,min:2970,max:3190,v:1.75,alive:true,phase:4}
   ];
-  ducks=[{x:950,y:574,phase:0,bounce:0},{x:1975,y:574,phase:2,bounce:0},{x:3170,y:574,phase:4,bounce:0},{x:3420,y:574,phase:1,bounce:0}];
+  enemies=[...baseEnemies.map(e=>({...e})),...baseEnemies.map(e=>({...e,x:e.x+SEGMENT,min:e.min+SEGMENT,max:e.max+SEGMENT,phase:(e.phase||0)+1}))]
+    .filter(e=>!(e.type==="crow"&&e.x>4900&&e.x<5200));
+  const baseDucks=[{x:950,y:574,phase:0},{x:1975,y:574,phase:2},{x:3170,y:574,phase:4},{x:3420,y:574,phase:1}];
+  ducks=[...baseDucks,...baseDucks.map(d=>({...d,x:d.x+SEGMENT,phase:d.phase+1}))].map(d=>({...d,bounce:0,scored:false}));
   updateHud();
 }
 function updateHud(){
-  $("#carrotScore").textContent=carrots;
-  $("#boneScore").textContent=bones;
+  $("#scoreValue").textContent=score.toLocaleString("ja-JP");
+  $("#timeValue").textContent=(timeLeft/10).toFixed(1);
   $("#lives").textContent="♥ ".repeat(lives).trim();
+  $("#highScoreValue").textContent=highScore.toLocaleString("ja-JP");
 }
 async function enterGameMode(){
   const root=document.documentElement;
@@ -55,6 +92,7 @@ function start(){
   reset(); running=true;
   $("#startScreen").classList.add("hidden");$("#storyScreen").classList.add("hidden");$("#endScreen").classList.add("hidden");$("#hud").classList.remove("hidden");
   beep(440,.08,"sine");
+  syncMusic();
   setTimeout(()=>toast("KICKで必殺・くるん回し蹴り！"),450);
 }
 function showStory(){
@@ -62,9 +100,10 @@ function showStory(){
   $("#startScreen").classList.add("hidden");
   $("#storyScreen").classList.remove("hidden");
   beep(440,.08,"sine");
+  syncMusic();
 }
 $("#startBtn").onclick=showStory;$("#storyBtn").onclick=start;$("#retryBtn").onclick=start;
-$("#soundBtn").onclick=()=>{sound=!sound;$("#soundBtn").classList.toggle("off",!sound)};
+$("#soundBtn").onclick=()=>{sound=!sound;$("#soundBtn").classList.toggle("off",!sound);syncMusic()};
 
 addEventListener("keydown",e=>{
   if([" ","ArrowUp","w","W"].includes(e.key)){keys.jump=true;e.preventDefault()}
@@ -81,6 +120,10 @@ document.querySelectorAll("[data-key]").forEach(b=>{
 });
 
 let audio;
+function syncMusic(){
+  if(sound&&!won)bgm.play().catch(()=>{});
+  else bgm.pause();
+}
 function beep(freq,dur,type="sine"){
   if(!sound)return;
   if(!audio) audio = new (window.AudioContext||window.webkitAudioContext)();
@@ -90,11 +133,17 @@ function overlap(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
 function toast(text){const el=$("#toast");el.textContent=text;el.classList.remove("hidden");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add("hidden"),1100)}
 function hurt(){
   if(player.inv>0)return;
-  lives--;updateHud();beep(130,.3,"sawtooth");
+  lives--;damageCount++;score-=50;updateHud();beep(130,.3,"sawtooth");toast("ダメージ！ −50");
+  if(lives<=0){
+    reset();toast("ライフがなくなった！ おうちから再出発");
+    return;
+  }
+  updateHud();
   player.inv=120; player.vy=-11; player.vx=-player.dir*8;
-  if(lives<=0){lives=3;player.x=Math.max(120,camera+100);player.y=200;updateHud();toast("たると、もういちど！")}
 }
 function update(){
+  const nextTime=Math.max(0,Math.ceil((endTime-performance.now())/100));
+  if(nextTime!==timeLeft){timeLeft=nextTime;updateHud()}
   const runSpeed=player.attack>0?3.7:5.6;
   player.vx+=(runSpeed-player.vx)*.2;
   player.dir=1;
@@ -104,7 +153,14 @@ function update(){
     beep(180,.08,"sawtooth");setTimeout(()=>beep(110,.09,"square"),55);
   }
   player.vy+=.72; player.vy=Math.min(18,player.vy);
-  let oldY=player.y;player.x+=player.vx;player.y+=player.vy;player.x=Math.max(0,Math.min(worldW-player.w,player.x));
+  let oldY=player.y,oldX=player.x;player.x+=player.vx;player.y+=player.vy;player.x=Math.max(0,Math.min(worldW-player.w,player.x));
+  for(const p of [...goalSteps,duckJumpWall,...fieldBlocks]){
+    if(!p.goalStep)continue;
+    const verticallyInside=player.y+player.h>p.y+4&&player.y<p.y+p.h;
+    if(verticallyInside&&oldX+player.w<=p.x+4&&player.x+player.w>p.x){
+      player.x=p.x-player.w;player.vx=0;
+    }
+  }
   player.onGround=false;
   for(const p of platforms){
     if(player.x+player.w>p.x&&player.x<p.x+p.w&&oldY+player.h<=p.y+3&&player.y+player.h>=p.y&&player.vy>=0){
@@ -116,23 +172,44 @@ function update(){
     const top=dy-14;
     if(d.bounce>0)d.bounce--;
     if(player.vy>=0&&player.x+player.w>d.x-40&&player.x<d.x+40&&oldY+player.h<=top+7&&player.y+player.h>=top){
-      player.y=top-player.h;player.vy=-19;player.onGround=false;d.bounce=12;
-      beep(340,.08,"square");setTimeout(()=>beep(720,.16,"triangle"),70);toast("カモさんジャンプ！");
+      player.y=top-player.h;player.vy=-24.7;player.onGround=false;d.bounce=16;
+      if(!d.scored){d.scored=true;duckJumps++;score+=150;updateHud();toast("カモさんジャンプ！ ＋150")}
+      else toast("カモさんジャンプ！");
+      beep(340,.08,"square");setTimeout(()=>beep(720,.16,"triangle"),70);
     }
   });
   const river=riverZones.find(r=>player.x+player.w*.75>r.x&&player.x+player.w*.25<r.x+r.w&&player.y+player.h>groundY+42);
   if(river){
-    lives--;beep(110,.35,"sawtooth");
-    if(lives<=0)lives=3;
+    emitSplash(player.x+player.w/2,groundY+28);
+    lives--;damageCount++;score-=50;updateHud();beep(110,.35,"sawtooth");
+    if(lives<=0){
+      reset();toast("ライフがなくなった！ おうちから再出発");
+      return;
+    }
     updateHud();
-    player.x=Math.max(40,river.x-125);player.y=groundY-player.h;player.vx=0;player.vy=0;player.inv=75;
-    toast("川に落ちちゃった！ ジャンプしよう");
+    player.x=Math.max(40,river.respawnX!==undefined?river.respawnX:river.x-320);player.y=groundY-player.h;player.vx=0;player.vy=0;player.inv=75;
+    toast("川に落ちちゃった！ −50");
   }
   if(player.y>H+100){player.y=80;player.x=Math.max(60,player.x-260);player.vy=0;hurt()}
   items.forEach(b=>{
     b.bob+=.05;
-    if(!b.taken&&overlap(player,{x:b.x-24,y:b.y-24,w:48,h:48})){b.taken=true;b.type==="carrot"?carrots++:bones++;updateHud();beep(760,.1,"triangle");setTimeout(()=>beep(980,.12,"triangle"),70);toast(b.type==="carrot"?"にんじんトイ ゲット！ ＋1":"骨をみつけた！ ＋1")}
+    if(!b.taken&&overlap(player,{x:b.x-24,y:b.y-24,w:48,h:48})){
+      b.taken=true;
+      if(b.type==="carrot"){
+        carrots++;score+=100;lives=Math.min(3,lives+1);toast("にんじんトイ！ ＋100・ライフ回復");
+      }else{
+        bones++;score+=50;toast("ホネッコ！ ＋50");
+      }
+      updateHud();beep(760,.1,"triangle");setTimeout(()=>beep(980,.12,"triangle"),70);
+    }
   });
+  if(!cheese.taken){
+    cheese.y=300+Math.sin(performance.now()/260)*240;
+    if(overlap(player,{x:cheese.x-cheese.w/2,y:cheese.y-cheese.h/2,w:cheese.w,h:cheese.h})){
+      cheese.taken=true;cheeseTaken=true;score+=1000;updateHud();
+      beep(880,.12,"triangle");setTimeout(()=>beep(1170,.2,"triangle"),100);toast("おみやげチーズ！ ＋1000");
+    }
+  }
   enemies.forEach(e=>{
     if(!e.alive)return;
     if(e.defeated>0){e.defeated--;if(e.defeated===0)e.alive=false;return}
@@ -141,12 +218,12 @@ function update(){
     const target={x:e.x,y:e.y,w:e.type==="cat"?66:58,h:e.type==="cat"?55:42};
     const kick={x:player.attackDir===1?player.x+player.w-8:player.x-72,y:player.y-30,w:80,h:114};
     if(player.attack>=9&&player.attack<=38&&overlap(kick,target)){
-      e.alive=false;beep(240,.08,"square");setTimeout(()=>beep(420,.12,"triangle"),60);toast("くるん回し蹴り！ やった！");
+      e.alive=false;if(e.type==="cat")catsDefeated++;else crowsDefeated++;score+=e.type==="cat"?100:200;updateHud();beep(240,.08,"square");setTimeout(()=>beep(420,.12,"triangle"),60);toast(e.type==="cat"?"野良ねこ撃破！ ＋100":"カラス撃破！ ＋200");
       return;
     }
     if(overlap(player,target)){
       if(player.vy>2&&player.y+player.h<e.y+24){
-        e.defeated=22;player.vy=-10;beep(170,.1,"square");setTimeout(()=>beep(300,.08,"triangle"),60);toast("ふみつぶした！");
+        e.defeated=22;player.vy=-10;if(e.type==="cat")catsDefeated++;else crowsDefeated++;score+=e.type==="cat"?100:200;updateHud();beep(170,.1,"square");setTimeout(()=>beep(300,.08,"triangle"),60);toast(e.type==="cat"?"野良ねこをふみつぶした！ ＋100":"カラスをふみつぶした！ ＋200");
       }
       else hurt();
     }
@@ -154,14 +231,45 @@ function update(){
   if(player.inv>0)player.inv--;
   if(player.attack>0)player.attack--;
   if(player.cooldown>0)player.cooldown--;
+  splashes.forEach(s=>{s.x+=s.vx;s.y+=s.vy;s.vy+=.42;s.life--;s.r*=.985});
+  splashes=splashes.filter(s=>s.life>0);
   if(player.x>goalX-70&&!won){
-    won=true;running=false;beep(620,.15);setTimeout(()=>beep(780,.15),140);setTimeout(()=>beep(1040,.4),280);
-    $("#endMessage").innerHTML=carrots===5&&bones===3?"とーちゃんとかーちゃんのところへ帰ってきたよ！<br><strong>ぜんぶ見つけてパーフェクト！</strong>":"とーちゃんとかーちゃんが待ってたよ！<br>にんじんトイ <strong>"+carrots+" / 5</strong>　骨 <strong>"+bones+" / 3</strong>";
+    won=true;running=false;syncMusic();beep(620,.15);setTimeout(()=>beep(780,.15),140);setTimeout(()=>beep(1040,.4),280);
+    const bonus=timeLeft,total=score+bonus;
+    $("#carrotCount").textContent=carrots+"個 × 100";
+    $("#carrotScore").textContent=(carrots*100).toLocaleString("ja-JP");
+    $("#boneCount").textContent=bones+"個 × 50";
+    $("#boneScore").textContent=(bones*50).toLocaleString("ja-JP");
+    $("#catCount").textContent=catsDefeated+"匹 × 100";
+    $("#catScore").textContent=(catsDefeated*100).toLocaleString("ja-JP");
+    $("#crowCount").textContent=crowsDefeated+"羽 × 200";
+    $("#crowScore").textContent=(crowsDefeated*200).toLocaleString("ja-JP");
+    $("#duckCount").textContent=duckJumps+"回 × 150";
+    $("#duckScore").textContent=(duckJumps*150).toLocaleString("ja-JP");
+    $("#cheeseCount").textContent=cheeseTaken?"1個 × 1000":"0個 × 1000";
+    $("#cheeseScore").textContent=cheeseTaken?"1,000":"0";
+    $("#damageCount").textContent=damageCount+"回 × −50";
+    $("#damageScore").textContent=(damageCount*-50).toLocaleString("ja-JP");
+    $("#actionScore").textContent=score.toLocaleString("ja-JP");
+    $("#timeBonus").textContent=bonus.toLocaleString("ja-JP");
+    $("#totalScore").textContent=total.toLocaleString("ja-JP");
+    const isNewRecord=total>highScore;
+    if(isNewRecord){highScore=total;saveHighScore(highScore)}
+    $("#highScoreValue").textContent=highScore.toLocaleString("ja-JP");
+    $("#newRecord").classList.toggle("hidden",!isNewRecord);
+    $("#cheeseHandoff").classList.toggle("hidden",!cheeseTaken);
     $("#endScreen").classList.remove("hidden");$("#hud").classList.add("hidden");
   }
   camera+=(Math.max(0,Math.min(worldW-W,player.x-W*.36))-camera)*.08;
 }
 function roundedRect(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+function emitSplash(x,y){
+  for(let i=0;i<22;i++){
+    const angle=Math.PI+(Math.random()*Math.PI);
+    const speed=3+Math.random()*8;
+    splashes.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-2,r:3+Math.random()*6,life:30+Math.random()*18});
+  }
+}
 function drawBackground(){
   if(bg.complete)ctx.drawImage(bg,0,0,bg.width,bg.height,0,0,W,H);
   else {ctx.fillStyle="#ffca91";ctx.fillRect(0,0,W,H)}
@@ -177,19 +285,26 @@ function drawWorld(){
     ctx.strokeStyle="#bff4ef";ctx.lineWidth=5;
     for(let x=r.x+8;x<r.x+r.w;x+=28){ctx.beginPath();ctx.arc(x,groundY+13,13,Math.PI,0);ctx.stroke()}
   });
+  splashes.forEach(s=>{
+    ctx.globalAlpha=Math.min(1,s.life/18);ctx.fillStyle="#e9ffff";
+    ctx.beginPath();ctx.ellipse(s.x,s.y,s.r*.65,s.r*1.35,0,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;
   // ground and floating flower platforms
   platforms.forEach((p,i)=>{
-    ctx.fillStyle=i<4?"#216d57":"#fff1ba";roundedRect(p.x,p.y,p.w,p.h,i<4?18:14);ctx.fill();
-    ctx.fillStyle=i<4?"#65b95d":"#e7ad52";roundedRect(p.x,p.y,p.w,Math.min(24,p.h),14);ctx.fill();
-    if(i<4){ctx.fillStyle="#8bd26d";for(let x=p.x+12;x<p.x+p.w;x+=34){ctx.beginPath();ctx.arc(x,p.y+5,14,0,Math.PI*2);ctx.fill()}}
+    const isGround=p.y===groundY&&p.h===130;
+    ctx.fillStyle=isGround?"#216d57":"#fff1ba";roundedRect(p.x,p.y,p.w,p.h,isGround?18:14);ctx.fill();
+    ctx.fillStyle=isGround?"#65b95d":"#e7ad52";roundedRect(p.x,p.y,p.w,Math.min(24,p.h),14);ctx.fill();
+    if(isGround){ctx.fillStyle="#8bd26d";for(let x=p.x+12;x<p.x+p.w;x+=34){ctx.beginPath();ctx.arc(x,p.y+5,14,0,Math.PI*2);ctx.fill()}}
   });
   // flowers
   for(let x=230;x<worldW;x+=370){const y=groundAt(x)-15;ctx.strokeStyle="#226c56";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-32);ctx.stroke();ctx.fillStyle=x%2?"#ff795f":"#ffc34c";for(let a=0;a<6;a++){ctx.beginPath();ctx.arc(x+Math.cos(a)*11,y-38+Math.sin(a)*11,9,0,7);ctx.fill()}ctx.fillStyle="#fff1a2";ctx.beginPath();ctx.arc(x,y-38,7,0,7);ctx.fill()}
   items.forEach(b=>{if(b.taken)return;const y=b.y+Math.sin(b.bob)*6;ctx.save();ctx.translate(b.x,y);ctx.rotate(Math.sin(b.bob*.7)*.08);b.type==="carrot"?drawCarrot():drawBone();ctx.restore()});
+  if(!cheese.taken)drawCheese(cheese.x,cheese.y);
   ducks.forEach(d=>drawDuck(d.x,d.y+Math.sin(performance.now()/380+d.phase)*4,d.bounce));
   enemies.forEach(e=>{if(e.alive)(e.type==="cat"?drawCat:drawCrow)(e.x,e.y,e.v,e.defeated>0)});
   drawHome(25,groundY-160);
-  drawParents(goalX-130,groundY-142);
+  drawParents(goalX+50,groundY-142);
   drawTart(player.x,player.y);
   ctx.restore();
 }
@@ -221,6 +336,14 @@ function drawCarrot(){
   ctx.restore();
 }
 function drawBone(){ctx.fillStyle="#fff5d8";ctx.strokeStyle="#c99860";ctx.lineWidth=4;ctx.beginPath();ctx.arc(-17,-8,10,0,7);ctx.arc(-17,8,10,0,7);ctx.arc(17,-8,10,0,7);ctx.arc(17,8,10,0,7);ctx.fill();ctx.stroke();ctx.fillStyle="#fff5d8";ctx.fillRect(-17,-10,34,20)}
+function drawCheese(x,y){
+  ctx.save();ctx.translate(x,y);ctx.rotate(Math.sin(performance.now()/420)*.08);
+  ctx.fillStyle="#ffd552";ctx.strokeStyle="#b97820";ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(-27,20);ctx.lineTo(-25,-14);ctx.lineTo(27,-25);ctx.lineTo(27,20);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.fillStyle="#e3a72d";
+  [[-9,-3,6],[11,7,5],[14,-13,4],[-14,13,4]].forEach(([cx,cy,r])=>{ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill()});
+  ctx.restore();
+}
 function drawHome(x,y){ctx.fillStyle="#fff2ce";roundedRect(x,y,150,160,25);ctx.fill();ctx.fillStyle="#e96850";ctx.beginPath();ctx.moveTo(x-20,y+30);ctx.lineTo(x+75,y-45);ctx.lineTo(x+170,y+30);ctx.closePath();ctx.fill();ctx.fillStyle="#1d8177";roundedRect(x+53,y+85,46,75,20);ctx.fill();ctx.fillStyle="#ffc34c";ctx.beginPath();ctx.arc(x+88,y+120,4,0,7);ctx.fill();ctx.fillStyle="#183b3a";ctx.font="900 20px 'M PLUS Rounded 1c'";ctx.fillText("おうち",x+45,y+58)}
 function drawParents(x,y){
   const person=(px,shirt,hair,label,wave)=>{
