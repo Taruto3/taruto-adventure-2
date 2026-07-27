@@ -14,10 +14,13 @@ function saveHighScore(value){
 }
 let highScore=loadHighScore();
 
-const W=1280,H=720,groundY=590,SEGMENT=4000,worldW=8800,goalX=8480,RUN_TIME=240;
-const baseRivers=[{x:700,w:500},{x:1700,w:550},{x:2600,w:900}];
-const finalRiver={x:8138,w:242,respawnX:7440};
-const riverZones=[...baseRivers,...baseRivers.map(r=>({...r,x:r.x+SEGMENT})),finalRiver];
+const FINAL_SHIFT=84;
+const GOAL_SHIFT=310;
+const W=1280,H=720,groundY=590,SEGMENT=4000,worldW=8800+GOAL_SHIFT,goalX=8480+GOAL_SHIFT,RUN_TIME=240;
+const LAST_DUCK_X=3420+SEGMENT+80+FINAL_SHIFT;
+const baseRivers=[{x:700,w:500},{x:1700,w:550},{x:2600,w:1040}];
+const finalRiver={x:8138+GOAL_SHIFT,w:242,respawnX:7440+GOAL_SHIFT};
+const riverZones=[...baseRivers,...baseRivers.map((r,index)=>({...r,x:r.x+SEGMENT,w:index===2?7550+GOAL_SHIFT-(r.x+SEGMENT):r.w})),finalRiver];
 let running=false,won=false,last=0,camera=0,carrots=0,bones=0,catsDefeated=0,crowsDefeated=0,duckJumps=0,damageCount=0,cheeseTaken=false,lives=3,score=0,timeLeft=RUN_TIME*10,endTime=0,sound=true,toastTimer;
 const keys={jump:false,attack:false};
 let player={x:150,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
@@ -26,34 +29,36 @@ const basePlatforms=[
   {x:3500,y:590,w:700,h:130},
   {x:620,y:470,w:250,h:28},{x:900,y:380,w:250,h:28},{x:1140,y:470,w:150,h:28},
   {x:1620,y:460,w:250,h:28},{x:1900,y:350,w:250,h:28},{x:2140,y:455,w:160,h:28},
-  {x:2520,y:470,w:240,h:28},{x:2780,y:385,w:240,h:28},{x:3040,y:300,w:240,h:28},{x:3300,y:410,w:240,h:28}
+  {x:2520,y:470,w:240,h:28},{x:2780,y:385,w:240,h:28},{x:3040,y:300,w:240,h:28}
 ];
 const goalSteps=[
-  {x:7550,y:530,w:84,h:60,goalStep:true},{x:7634,y:470,w:84,h:120,goalStep:true},
-  {x:7718,y:410,w:84,h:180,goalStep:true},{x:7802,y:350,w:84,h:240,goalStep:true},
-  {x:7886,y:290,w:252,h:300,goalStep:true},{x:8380,y:590,w:420,h:130}
+  {x:7550+GOAL_SHIFT,y:530,w:84,h:60,goalStep:true},{x:7634+GOAL_SHIFT,y:470,w:84,h:120,goalStep:true},
+  {x:7718+GOAL_SHIFT,y:410,w:84,h:180,goalStep:true},{x:7802+GOAL_SHIFT,y:350,w:84,h:240,goalStep:true},
+  {x:7886+GOAL_SHIFT,y:290,w:252,h:300,goalStep:true},{x:8380+GOAL_SHIFT,y:590,w:420,h:130}
 ];
 const duckJumpWall={x:5200,y:300,w:110,h:290,goalStep:true,duckWall:true};
 const fieldBlocks=[
-  {x:3500,y:500,w:72,h:90,goalStep:true},{x:3716,y:525,w:72,h:65,goalStep:true},
-  {x:3932,y:475,w:72,h:115,goalStep:true},{x:4148,y:550,w:72,h:40,goalStep:true},
-  {x:4364,y:450,w:72,h:140,goalStep:true}
+  {x:3640,y:500,w:72,h:90,goalStep:true},{x:3856,y:525,w:72,h:65,goalStep:true},
+  {x:4072,y:475,w:72,h:115,goalStep:true},{x:4288,y:550,w:72,h:40,goalStep:true},
+  {x:4504,y:450,w:72,h:140,goalStep:true}
 ];
+const firstPlatforms=basePlatforms.map(p=>p.x===3500&&p.y===groundY?{...p,x:3640,w:560}:p);
 const secondPlatforms=basePlatforms
-  .filter(p=>p.y===groundY||![620,900,1140].includes(p.x))
+  .filter(p=>p.x!==3500&&(p.y===groundY||![620,900,1140].includes(p.x)))
   .map(p=>({...p,x:p.x+SEGMENT}));
-const platforms=[...basePlatforms,...secondPlatforms,...fieldBlocks,duckJumpWall,...goalSteps];
+const platforms=[...firstPlatforms,...secondPlatforms,...fieldBlocks,duckJumpWall,...goalSteps];
 let items=[], enemies=[], ducks=[],splashes=[];
-let cheese={x:8260,y:430,w:54,h:42,taken:false};
+let cheese={x:8260+GOAL_SHIFT,y:430,w:54,h:42,taken:false};
 
 function reset(){
   keys.jump=false;keys.attack=false;
   player={x:190,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
-  $("#newRecord").classList.add("hidden");
-  camera=0;carrots=0;bones=0;catsDefeated=0;crowsDefeated=0;duckJumps=0;damageCount=0;splashes=[];cheeseTaken=false;cheese={x:8260,y:430,w:54,h:42,taken:false};lives=3;score=0;timeLeft=RUN_TIME*10;endTime=performance.now()+RUN_TIME*1000;won=false;
+  $("#newRecord").classList.add("hidden");$("#perfectClear").classList.add("hidden");$("#perfectClear").classList.remove("preview-still");
+  camera=0;carrots=0;bones=0;catsDefeated=0;crowsDefeated=0;duckJumps=0;damageCount=0;splashes=[];cheeseTaken=false;cheese={x:8260+GOAL_SHIFT,y:430,w:54,h:42,taken:false};lives=3;score=0;timeLeft=RUN_TIME*10;endTime=performance.now()+RUN_TIME*1000;won=false;
   const baseItems=[[720,415,"carrot"],[995,325,"bone"],[1320,535,"carrot"],[1740,405,"carrot"],[2010,295,"bone"],[2360,535,"carrot"],[2810,330,"bone"],[3070,245,"carrot"]];
   items=[...baseItems,...baseItems.map(([x,y,type])=>[x+SEGMENT,y,type])]
     .filter(([x,,type])=>type!=="carrot"||![1320,5740,7070].includes(x))
+    .map(([x,y,type])=>[x===5320?5480:x,y,type])
     .map(([x,y,type])=>({x,y,type,taken:false,bob:Math.random()*6}));
   const baseEnemies=[
     {type:"cat",x:540,y:535,min:420,max:650,v:1.25,alive:true},
@@ -65,14 +70,23 @@ function reset(){
   ];
   enemies=[...baseEnemies.map(e=>({...e})),...baseEnemies.map(e=>({...e,x:e.x+SEGMENT,min:e.min+SEGMENT,max:e.max+SEGMENT,phase:(e.phase||0)+1}))]
     .filter(e=>!(e.type==="crow"&&e.x>4900&&e.x<5200));
+  enemies.push(
+    {type:"crow",x:LAST_DUCK_X+180,y:110,min:LAST_DUCK_X+125,max:LAST_DUCK_X+245,v:1.8,alive:true,phase:3},
+    {type:"crow",x:7550+GOAL_SHIFT+270,y:245,min:7550+GOAL_SHIFT+205,max:7550+GOAL_SHIFT+345,v:1.7,alive:true,phase:5}
+  );
   const baseDucks=[{x:950,y:574,phase:0},{x:1975,y:574,phase:2},{x:3170,y:574,phase:4},{x:3420,y:574,phase:1}];
-  ducks=[...baseDucks,...baseDucks.map(d=>({...d,x:d.x+SEGMENT,phase:d.phase+1}))].map(d=>({...d,bounce:0,scored:false}));
+  const firstDucks=baseDucks.map(d=>d.x===3420?{...d,x:3560}:d);
+  const secondDucks=baseDucks.map(d=>({...d,x:d.x===3420?LAST_DUCK_X:d.x+SEGMENT,phase:d.phase+1}));
+  ducks=[...firstDucks,...secondDucks].map(d=>({...d,bounce:0,scored:false}));
   updateHud();
 }
 function updateHud(){
   $("#scoreValue").textContent=score.toLocaleString("ja-JP");
   $("#timeValue").textContent=(timeLeft/10).toFixed(1);
   $("#lives").textContent="♥ ".repeat(lives).trim();
+  $("#duckHud").textContent=`${duckJumps}/${ducks.length}`;
+  $("#carrotHud").textContent=`${carrots}/${items.filter(item=>item.type==="carrot").length}`;
+  $("#boneHud").textContent=`${bones}/${items.filter(item=>item.type==="bone").length}`;
   $("#highScoreValue").textContent=highScore.toLocaleString("ja-JP");
 }
 async function enterGameMode(){
@@ -131,7 +145,19 @@ function beep(freq,dur,type="sine"){
   const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.06,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+dur);
 }
 function overlap(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
-function toast(text){const el=$("#toast");el.textContent=text;el.classList.remove("hidden");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add("hidden"),1100)}
+function toast(text,achievement=false){
+  const el=$("#toast");el.textContent=text;el.classList.toggle("achievement",achievement);el.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{el.classList.add("hidden");el.classList.remove("achievement")},achievement?1900:1100);
+}
+function celebrate(text){
+  toast(text,true);
+  beep(660,.1,"triangle");setTimeout(()=>beep(880,.12,"triangle"),90);setTimeout(()=>beep(1100,.2,"triangle"),190);
+}
+function enemyResult(normalText){
+  if(catsDefeated+crowsDefeated===enemies.length)celebrate("野良ねことカラスを全部撃破！");
+  else toast(normalText);
+}
 function hurt(){
   if(player.inv>0)return;
   lives--;damageCount++;score-=50;updateHud();beep(130,.3,"sawtooth");toast("ダメージ！ −50");
@@ -174,7 +200,11 @@ function update(){
     if(d.bounce>0)d.bounce--;
     if(player.vy>=0&&player.x+player.w>d.x-40&&player.x<d.x+40&&oldY+player.h<=top+7&&player.y+player.h>=top){
       player.y=top-player.h;player.vy=-24.7;player.onGround=false;d.bounce=16;
-      if(!d.scored){d.scored=true;duckJumps++;score+=150;updateHud();toast("カモさんジャンプ！ ＋150")}
+      if(!d.scored){
+        d.scored=true;duckJumps++;score+=150;updateHud();
+        if(duckJumps===ducks.length)celebrate("カモさんジャンプ 全部達成！");
+        else toast(`カモさんジャンプ！ ＋150（${duckJumps}/${ducks.length}）`);
+      }
       else toast("カモさんジャンプ！");
       beep(340,.08,"square");setTimeout(()=>beep(720,.16,"triangle"),70);
     }
@@ -197,9 +227,13 @@ function update(){
     if(!b.taken&&overlap(player,{x:b.x-24,y:b.y-24,w:48,h:48})){
       b.taken=true;
       if(b.type==="carrot"){
-        carrots++;score+=100;lives=Math.min(3,lives+1);toast("にんじんトイ！ ＋100・ライフ回復");
+        carrots++;score+=100;lives=Math.min(3,lives+1);
+        if(carrots===items.filter(item=>item.type==="carrot").length)celebrate("にんじんトイを全部獲得！");
+        else toast("にんじんトイ！ ＋100・ライフ回復");
       }else{
-        bones++;score+=50;toast("ホネッコ！ ＋50");
+        bones++;score+=50;
+        if(bones===items.filter(item=>item.type==="bone").length)celebrate("ホネッコを全部獲得！");
+        else toast("ホネッコ！ ＋50");
       }
       updateHud();beep(760,.1,"triangle");setTimeout(()=>beep(980,.12,"triangle"),70);
     }
@@ -219,12 +253,12 @@ function update(){
     const target={x:e.x,y:e.y,w:e.type==="cat"?66:58,h:e.type==="cat"?55:42};
     const kick={x:player.attackDir===1?player.x+player.w-8:player.x-72,y:player.y-30,w:80,h:114};
     if(player.attack>=9&&player.attack<=38&&overlap(kick,target)){
-      e.alive=false;if(e.type==="cat")catsDefeated++;else crowsDefeated++;score+=e.type==="cat"?100:200;updateHud();beep(240,.08,"square");setTimeout(()=>beep(420,.12,"triangle"),60);toast(e.type==="cat"?"野良ねこ撃破！ ＋100":"カラス撃破！ ＋200");
+      e.alive=false;if(e.type==="cat")catsDefeated++;else crowsDefeated++;score+=e.type==="cat"?100:200;updateHud();beep(240,.08,"square");setTimeout(()=>beep(420,.12,"triangle"),60);enemyResult(e.type==="cat"?"野良ねこ撃破！ ＋100":"カラス撃破！ ＋200");
       return;
     }
     if(overlap(player,target)){
       if(player.vy>2&&player.y+player.h<e.y+24){
-        e.defeated=22;player.vy=-10;if(e.type==="cat")catsDefeated++;else crowsDefeated++;score+=e.type==="cat"?100:200;updateHud();beep(170,.1,"square");setTimeout(()=>beep(300,.08,"triangle"),60);toast(e.type==="cat"?"野良ねこをふみつぶした！ ＋100":"カラスをふみつぶした！ ＋200");
+        e.defeated=22;player.vy=-10;if(e.type==="cat")catsDefeated++;else crowsDefeated++;score+=e.type==="cat"?100:200;updateHud();beep(170,.1,"square");setTimeout(()=>beep(300,.08,"triangle"),60);enemyResult(e.type==="cat"?"野良ねこをふみつぶした！ ＋100":"カラスをふみつぶした！ ＋200");
       }
       else hurt();
     }
@@ -237,6 +271,15 @@ function update(){
   if(player.x>goalX-70&&!won){
     won=true;running=false;syncMusic();beep(620,.15);setTimeout(()=>beep(780,.15),140);setTimeout(()=>beep(1040,.4),280);
     const bonus=timeLeft,total=score+bonus;
+    const perfect=items.every(item=>item.taken)
+      && duckJumps===ducks.length
+      && catsDefeated+crowsDefeated===enemies.length
+      && damageCount===0;
+    if(perfect){
+      [[520,620],[660,740],[780,860],[1040,1020]].forEach(([frequency,delay],index)=>
+        setTimeout(()=>beep(frequency,index===3?.38:.13,"triangle"),delay)
+      );
+    }
     $("#carrotCount").textContent=carrots+"個 × 100";
     $("#carrotScore").textContent=(carrots*100).toLocaleString("ja-JP");
     $("#boneCount").textContent=bones+"個 × 50";
@@ -258,6 +301,7 @@ function update(){
     if(isNewRecord){highScore=total;saveHighScore(highScore)}
     $("#highScoreValue").textContent=highScore.toLocaleString("ja-JP");
     $("#newRecord").classList.toggle("hidden",!isNewRecord);
+    $("#perfectClear").classList.toggle("hidden",!perfect);
     $("#cheeseHandoff").classList.toggle("hidden",!cheeseTaken);
     $("#endScreen").classList.remove("hidden");$("#hud").classList.add("hidden");$("#mobileControls").classList.add("hidden");
   }
@@ -402,4 +446,17 @@ function draw(){
   if(running){ctx.fillStyle="#fff";ctx.globalAlpha=.12;for(let i=0;i<12;i++){ctx.beginPath();ctx.arc((i*137-camera*.2)%1400,90+(i%4)*55,3+(i%3),0,7);ctx.fill()}ctx.globalAlpha=1}
 }
 function loop(t){if(running&&t-last>12){update();last=t}draw();requestAnimationFrame(loop)}
-reset();requestAnimationFrame(loop);
+function showPerfectPreview(){
+  running=false;won=true;
+  $("#startScreen").classList.add("hidden");$("#storyScreen").classList.add("hidden");
+  $("#endScreen").classList.remove("hidden");$("#perfectClear").classList.remove("hidden");
+  $("#perfectClear").classList.add("preview-still");
+  $("#newRecord").classList.remove("hidden");$("#cheeseHandoff").classList.remove("hidden");
+  $("#hud").classList.add("hidden");$("#mobileControls").classList.add("hidden");
+  $("#actionScore").textContent="16,240";$("#timeBonus").textContent="2,400";$("#totalScore").textContent="18,640";
+}
+reset();
+const localPerfectPreview=(location.hostname==="localhost"||location.hostname==="127.0.0.1"||location.protocol==="file:")
+  && new URLSearchParams(location.search).has("perfect-preview");
+if(localPerfectPreview)setTimeout(showPerfectPreview,80);
+requestAnimationFrame(loop);

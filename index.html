@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <main class="game-shell">
@@ -33,6 +33,11 @@
         <div class="hud-pill"><span class="mini-tart">🐶</span><span id="lives">♥ ♥ ♥</span></div>
         <div class="hud-pill score-pill"><small>SCORE</small><b id="scoreValue">0</b></div>
         <div class="hud-pill time-pill"><small>TIME</small><b id="timeValue">240.0</b></div>
+        <div class="hud-pill duck-pill"><span>🦆</span><b id="duckHud">0/0</b></div>
+        <div class="hud-pill item-count-pill">
+          <span>🥕</span><b id="carrotHud">0/0</b>
+          <span>🦴</span><b id="boneHud">0/0</b>
+        </div>
         <div class="hud-pill stage-label">たるとの道</div>
         <button id="playRetryBtn" class="play-retry-btn" type="button" aria-label="最初からリトライ" title="最初からリトライ">
           <span>↻</span><small>リトライ</small>
@@ -57,6 +62,22 @@
       </section>
 
       <section id="endScreen" class="overlay end-screen hidden">
+        <div id="perfectClear" class="perfect-clear hidden" role="status" aria-label="パーフェクトクリア">
+          <div class="perfect-flash">
+            <div class="perfect-rays"></div>
+            <i style="--x:8%;--d:.05s;--c:#ff795f">★</i><i style="--x:17%;--d:.22s;--c:#5fcea9">●</i>
+            <i style="--x:27%;--d:.12s;--c:#ffc34c">◆</i><i style="--x:38%;--d:.31s;--c:#fff8e9">★</i>
+            <i style="--x:49%;--d:.02s;--c:#ff795f">●</i><i style="--x:60%;--d:.18s;--c:#5fcea9">◆</i>
+            <i style="--x:71%;--d:.28s;--c:#ffc34c">★</i><i style="--x:82%;--d:.08s;--c:#fff8e9">●</i>
+            <i style="--x:92%;--d:.25s;--c:#ff795f">◆</i>
+            <div class="perfect-title">
+              <small>ALL MISSIONS COMPLETE</small>
+              <strong>PERFECT!</strong>
+              <span>ぜんぶ達成・ノーダメージ！</span>
+            </div>
+          </div>
+          <div class="perfect-stamp"><span>★</span><b>PERFECT CLEAR</b><span>★</span></div>
+        </div>
         <p class="eyebrow">ADVENTURE COMPLETE!</p>
         <h2>やったね、たると！</h2>
         <div id="newRecord" class="new-record hidden" role="status">
@@ -65,7 +86,17 @@
         <div id="cheeseHandoff" class="cheese-handoff hidden" aria-label="たるとがとーちゃんとかーちゃんにチーズを渡す">
           <span class="handoff-taruto">🐶</span>
           <span class="handoff-cheese">🧀</span>
-          <span class="handoff-parents">👨‍👩‍👦</span>
+          <span class="handoff-parents" aria-hidden="true">
+            <svg viewBox="0 0 72 44" role="img" aria-label="とーちゃんとかーちゃん">
+              <circle class="parent-head dad" cx="20" cy="11" r="8"/>
+              <path class="parent-hair" d="M12 10c1-10 16-11 17 1-4-3-12-4-17-1z"/>
+              <path class="parent-body dad" d="M6 42c1-17 7-23 14-23s13 6 14 23z"/>
+              <circle class="parent-head mom" cx="52" cy="11" r="8"/>
+              <path class="parent-hair" d="M43 13c-1-15 19-15 18 0l-4 7-2-5c-3 3-7 2-10 0l-2 5z"/>
+              <path class="parent-body mom" d="M38 42c1-17 7-23 14-23s13 6 14 23z"/>
+              <path class="parent-heart" d="M36 20c-5-6-12 2 0 10 12-8 5-16 0-10z"/>
+            </svg>
+          </span>
           <strong>チーズのおみやげ、どうぞ！</strong>
         </div>
         <div class="end-medal">☀</div>
@@ -107,6 +138,6 @@
       <span class="legend">🥕 にんじんトイ　 🦴 骨　 <i class="dot teal"></i> ゴール</span>
     </footer>
   </main>
-  <script src="game.js?v=2"></script>
+  <script src="game.js?v=11"></script>
 </body>
 </html>
