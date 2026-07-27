@@ -91,7 +91,7 @@ async function enterGameMode(){
 function start(){
   enterGameMode();
   reset(); running=true;
-  $("#startScreen").classList.add("hidden");$("#storyScreen").classList.add("hidden");$("#endScreen").classList.add("hidden");$("#hud").classList.remove("hidden");
+  $("#startScreen").classList.add("hidden");$("#storyScreen").classList.add("hidden");$("#endScreen").classList.add("hidden");$("#hud").classList.remove("hidden");$("#mobileControls").classList.remove("hidden");
   beep(440,.08,"sine");
   syncMusic();
   setTimeout(()=>toast("KICKで必殺・くるん回し蹴り！"),450);
@@ -259,7 +259,7 @@ function update(){
     $("#highScoreValue").textContent=highScore.toLocaleString("ja-JP");
     $("#newRecord").classList.toggle("hidden",!isNewRecord);
     $("#cheeseHandoff").classList.toggle("hidden",!cheeseTaken);
-    $("#endScreen").classList.remove("hidden");$("#hud").classList.add("hidden");
+    $("#endScreen").classList.remove("hidden");$("#hud").classList.add("hidden");$("#mobileControls").classList.add("hidden");
   }
   camera+=(Math.max(0,Math.min(worldW-W,player.x-W*.36))-camera)*.08;
 }

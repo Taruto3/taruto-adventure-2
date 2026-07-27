@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <main class="game-shell">
@@ -95,7 +95,7 @@
 
       <div id="toast" class="toast hidden">にんじんトイをみつけた！</div>
 
-      <div class="mobile-controls" aria-label="スマートフォン用操作">
+      <div id="mobileControls" class="mobile-controls hidden" aria-label="スマートフォン用操作">
         <button data-key="attack" class="attack" aria-label="くるん回し蹴り">⚡<small>KICK</small></button>
         <button data-key="jump" class="jump" aria-label="ジャンプ">↑<small>JUMP</small></button>
       </div>
@@ -107,6 +107,6 @@
       <span class="legend">🥕 にんじんトイ　 🦴 骨　 <i class="dot teal"></i> ゴール</span>
     </footer>
   </main>
-  <script src="game.js"></script>
+  <script src="game.js?v=2"></script>
 </body>
 </html>
