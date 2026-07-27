@@ -47,6 +47,7 @@ let items=[], enemies=[], ducks=[],splashes=[];
 let cheese={x:8260,y:430,w:54,h:42,taken:false};
 
 function reset(){
+  keys.jump=false;keys.attack=false;
   player={x:190,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
   $("#newRecord").classList.add("hidden");
   camera=0;carrots=0;bones=0;catsDefeated=0;crowsDefeated=0;duckJumps=0;damageCount=0;splashes=[];cheeseTaken=false;cheese={x:8260,y:430,w:54,h:42,taken:false};lives=3;score=0;timeLeft=RUN_TIME*10;endTime=performance.now()+RUN_TIME*1000;won=false;
@@ -102,7 +103,7 @@ function showStory(){
   beep(440,.08,"sine");
   syncMusic();
 }
-$("#startBtn").onclick=showStory;$("#storyBtn").onclick=start;$("#retryBtn").onclick=start;
+$("#startBtn").onclick=showStory;$("#storyBtn").onclick=start;$("#retryBtn").onclick=start;$("#playRetryBtn").onclick=start;
 $("#soundBtn").onclick=()=>{sound=!sound;$("#soundBtn").classList.toggle("off",!sound);syncMusic()};
 
 addEventListener("keydown",e=>{
