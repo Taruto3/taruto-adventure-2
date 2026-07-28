@@ -4,6 +4,7 @@ const $ = s => document.querySelector(s);
 const bg = new Image(); bg.src = "assets/tart-adventure-bg.png";
 const bgm = new Audio("assets/flowerbed-fields.ogg"); bgm.loop=true; bgm.volume=.2;
 const HIGH_SCORE_KEY="taruto-adventure-2-high-score";
+const DEBUG_PERFECT=new URLSearchParams(location.search).get("debug-perfect")==="1";
 
 function loadHighScore(){
   try{return Math.max(0,Number(localStorage.getItem(HIGH_SCORE_KEY))||0)}
@@ -21,7 +22,7 @@ const LAST_DUCK_X=3420+SEGMENT+80+FINAL_SHIFT;
 const baseRivers=[{x:700,w:500},{x:1700,w:550},{x:2600,w:1040}];
 const finalRiver={x:8138+GOAL_SHIFT,w:242,respawnX:7440+GOAL_SHIFT};
 const riverZones=[...baseRivers,...baseRivers.map((r,index)=>({...r,x:r.x+SEGMENT,w:index===2?7550+GOAL_SHIFT-(r.x+SEGMENT):r.w})),finalRiver];
-let running=false,won=false,last=0,camera=0,carrots=0,bones=0,catsDefeated=0,crowsDefeated=0,duckJumps=0,damageCount=0,cheeseTaken=false,lives=3,score=0,timeLeft=RUN_TIME*10,endTime=0,sound=true,toastTimer;
+let running=false,won=false,last=0,camera=0,carrots=0,bones=0,catsDefeated=0,crowsDefeated=0,duckJumps=0,damageCount=0,cheeseTaken=false,lives=3,score=0,timeLeft=RUN_TIME*10,endTime=0,sound=true,toastTimer,orientationTimer,clearPerfect=false,clearGreat=false;
 const keys={jump:false,attack:false};
 let player={x:150,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
 const basePlatforms=[
@@ -54,7 +55,7 @@ function reset(){
   keys.jump=false;keys.attack=false;
   player={x:190,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
   $("#newRecord").classList.add("hidden");$("#perfectClear").classList.add("hidden");$("#perfectClear").classList.remove("preview-still");$("#greatClear").classList.add("hidden");
-  camera=0;carrots=0;bones=0;catsDefeated=0;crowsDefeated=0;duckJumps=0;damageCount=0;splashes=[];cheeseTaken=false;cheese={x:8260+GOAL_SHIFT,y:430,w:54,h:42,taken:false};lives=3;score=0;timeLeft=RUN_TIME*10;endTime=performance.now()+RUN_TIME*1000;won=false;
+  camera=0;carrots=0;bones=0;catsDefeated=0;crowsDefeated=0;duckJumps=0;damageCount=0;splashes=[];cheeseTaken=false;cheese={x:8260+GOAL_SHIFT,y:430,w:54,h:42,taken:false};lives=3;score=0;timeLeft=RUN_TIME*10;endTime=performance.now()+RUN_TIME*1000;won=false;clearPerfect=false;clearGreat=false;
   const baseItems=[[720,415,"carrot"],[995,325,"bone"],[1320,535,"carrot"],[1740,405,"carrot"],[2010,295,"bone"],[2360,535,"carrot"],[2810,330,"bone"],[3070,245,"carrot"]];
   items=[...baseItems,...baseItems.map(([x,y,type])=>[x+SEGMENT,y,type])]
     .filter(([x,,type])=>type!=="carrot"||![1320,5740,7070].includes(x))
@@ -163,6 +164,29 @@ function enemyResult(normalText){
   if(catsDefeated+crowsDefeated===enemies.length)celebrate("野良ねことカラスを全部撃破！");
   else toast(normalText);
 }
+function showClearEffect(element,visible){
+  element.classList.add("hidden");
+  if(!visible)return;
+  void element.offsetWidth;
+  element.classList.remove("hidden");
+}
+function isLandscapeView(){return matchMedia("(orientation: landscape)").matches}
+function refreshClearEffects(){
+  clearTimeout(orientationTimer);
+  orientationTimer=setTimeout(()=>{
+    if(!won||!isLandscapeView()){
+      showClearEffect($("#perfectClear"),false);
+      showClearEffect($("#greatClear"),false);
+      return;
+    }
+    showClearEffect($("#perfectClear"),clearPerfect);
+    showClearEffect($("#greatClear"),clearGreat);
+  },180);
+}
+addEventListener("orientationchange",refreshClearEffects);
+const landscapeMedia=matchMedia("(orientation: landscape)");
+if(landscapeMedia.addEventListener)landscapeMedia.addEventListener("change",refreshClearEffects);
+else if(landscapeMedia.addListener)landscapeMedia.addListener(refreshClearEffects);
 function hurt(){
   if(player.inv>0)return;
   lives--;damageCount++;score-=50;updateHud();beep(130,.3,"sawtooth");toast("ダメージ！ −50");
@@ -276,12 +300,15 @@ function update(){
   if(player.x>goalX-70&&!won){
     won=true;running=false;syncMusic();beep(620,.15);setTimeout(()=>beep(780,.15),140);setTimeout(()=>beep(1040,.4),280);
     const bonus=timeLeft,total=score+bonus;
-    const perfect=items.every(item=>item.taken)
+    const perfect=DEBUG_PERFECT||(
+      items.every(item=>item.taken)
       && duckJumps===ducks.length
       && catsDefeated+crowsDefeated===enemies.length
       && damageCount===0
-      && cheeseTaken;
+      && cheeseTaken
+    );
     const greatScore=!perfect&&total>=7000;
+    clearPerfect=perfect;clearGreat=greatScore;
     if(perfect){
       [[520,620],[660,740],[780,860],[1040,1020]].forEach(([frequency,delay],index)=>
         setTimeout(()=>beep(frequency,index===3?.38:.13,"triangle"),delay)
@@ -311,10 +338,15 @@ function update(){
     if(isNewRecord){highScore=total;saveHighScore(highScore)}
     $("#highScoreValue").textContent=highScore.toLocaleString("ja-JP");
     $("#newRecord").classList.toggle("hidden",!isNewRecord);
-    $("#perfectClear").classList.toggle("hidden",!perfect);
-    $("#greatClear").classList.toggle("hidden",!greatScore);
     $("#cheeseHandoff").classList.toggle("hidden",!cheeseTaken);
     $("#endScreen").classList.remove("hidden");$("#hud").classList.add("hidden");$("#mobileControls").classList.add("hidden");
+    if(isLandscapeView()){
+      showClearEffect($("#perfectClear"),perfect);
+      showClearEffect($("#greatClear"),greatScore);
+    }else{
+      showClearEffect($("#perfectClear"),false);
+      showClearEffect($("#greatClear"),false);
+    }
   }
   camera+=(Math.max(0,Math.min(worldW-W,player.x-W*.36))-camera)*.08;
 }
