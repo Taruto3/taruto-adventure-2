@@ -117,7 +117,12 @@ function showStory(){
   beep(440,.08,"sine");
   syncMusic();
 }
-$("#startBtn").onclick=showStory;$("#storyBtn").onclick=start;$("#retryBtn").onclick=start;$("#playRetryBtn").onclick=start;
+function goHome(){
+  running=false;won=false;keys.jump=false;keys.attack=false;bgm.pause();
+  $("#storyScreen").classList.add("hidden");$("#endScreen").classList.add("hidden");$("#hud").classList.add("hidden");
+  $("#mobileControls").classList.add("hidden");$("#toast").classList.add("hidden");$("#startScreen").classList.remove("hidden");
+}
+$("#startBtn").onclick=showStory;$("#storyBtn").onclick=start;$("#retryBtn").onclick=start;$("#playRetryBtn").onclick=start;$("#playHomeBtn").onclick=goHome;
 $("#soundBtn").onclick=()=>{sound=!sound;$("#soundBtn").classList.toggle("off",!sound);syncMusic()};
 
 addEventListener("keydown",e=>{

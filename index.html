@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
   <main class="game-shell">
@@ -42,10 +42,31 @@
         <button id="playRetryBtn" class="play-retry-btn" type="button" aria-label="最初からリトライ" title="最初からリトライ">
           <span>↻</span><small>リトライ</small>
         </button>
+        <button id="playHomeBtn" class="play-home-btn" type="button" aria-label="ホーム画面に戻る" title="ホーム画面に戻る">
+          <span>←</span><small>HOME</small>
+        </button>
       </div>
 
       <section id="startScreen" class="overlay splash-screen">
-        <button id="startBtn" class="primary-btn splash-btn"><span>スタート</span><b>→</b></button>
+        <div class="game-hub">
+          <p class="hub-eyebrow">TARUTO'S GAME HOUSE</p>
+          <h2 class="hub-title">たるとのゲームひろば</h2>
+          <div class="game-grid">
+            <button id="startBtn" class="game-card" type="button" aria-label="たるとの大冒険2をはじめる">
+              <span class="game-card-art">
+                <img src="assets/taruto-character-v3.png" alt="">
+                <i>PLAY</i>
+              </span>
+              <strong>たるとの大冒険2</strong>
+              <small>アクション</small>
+            </button>
+          </div>
+        </div>
+        <div class="version-badge" aria-label="ゲームのバージョン">
+          <span>VERSION</span>
+          <b>1.5.0</b>
+          <small>2026.07.28 UPDATE</small>
+        </div>
       </section>
 
       <section id="storyScreen" class="overlay start-screen hidden">
@@ -143,6 +164,6 @@
       <span class="legend">🥕 にんじんトイ　 🦴 骨　 <i class="dot teal"></i> ゴール</span>
     </footer>
   </main>
-  <script src="game.js?v=12"></script>
+  <script src="game.js?v=15"></script>
 </body>
 </html>
