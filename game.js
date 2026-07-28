@@ -53,7 +53,7 @@ let cheese={x:8260+GOAL_SHIFT,y:430,w:54,h:42,taken:false};
 function reset(){
   keys.jump=false;keys.attack=false;
   player={x:190,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
-  $("#newRecord").classList.add("hidden");$("#perfectClear").classList.add("hidden");$("#perfectClear").classList.remove("preview-still");
+  $("#newRecord").classList.add("hidden");$("#perfectClear").classList.add("hidden");$("#perfectClear").classList.remove("preview-still");$("#greatClear").classList.add("hidden");
   camera=0;carrots=0;bones=0;catsDefeated=0;crowsDefeated=0;duckJumps=0;damageCount=0;splashes=[];cheeseTaken=false;cheese={x:8260+GOAL_SHIFT,y:430,w:54,h:42,taken:false};lives=3;score=0;timeLeft=RUN_TIME*10;endTime=performance.now()+RUN_TIME*1000;won=false;
   const baseItems=[[720,415,"carrot"],[995,325,"bone"],[1320,535,"carrot"],[1740,405,"carrot"],[2010,295,"bone"],[2360,535,"carrot"],[2810,330,"bone"],[3070,245,"carrot"]];
   items=[...baseItems,...baseItems.map(([x,y,type])=>[x+SEGMENT,y,type])]
@@ -274,11 +274,16 @@ function update(){
     const perfect=items.every(item=>item.taken)
       && duckJumps===ducks.length
       && catsDefeated+crowsDefeated===enemies.length
-      && damageCount===0;
+      && damageCount===0
+      && cheeseTaken;
+    const greatScore=!perfect&&total>=7000;
     if(perfect){
       [[520,620],[660,740],[780,860],[1040,1020]].forEach(([frequency,delay],index)=>
         setTimeout(()=>beep(frequency,index===3?.38:.13,"triangle"),delay)
       );
+    }else if(greatScore){
+      setTimeout(()=>beep(620,.12,"triangle"),520);
+      setTimeout(()=>beep(820,.2,"triangle"),670);
     }
     $("#carrotCount").textContent=carrots+"個 × 100";
     $("#carrotScore").textContent=(carrots*100).toLocaleString("ja-JP");
@@ -302,6 +307,7 @@ function update(){
     $("#highScoreValue").textContent=highScore.toLocaleString("ja-JP");
     $("#newRecord").classList.toggle("hidden",!isNewRecord);
     $("#perfectClear").classList.toggle("hidden",!perfect);
+    $("#greatClear").classList.toggle("hidden",!greatScore);
     $("#cheeseHandoff").classList.toggle("hidden",!cheeseTaken);
     $("#endScreen").classList.remove("hidden");$("#hud").classList.add("hidden");$("#mobileControls").classList.add("hidden");
   }
