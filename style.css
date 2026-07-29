@@ -68,11 +68,11 @@ kbd{display:inline-grid;place-items:center;min-width:28px;height:25px;padding:0 
 .score-summary .score-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:1px 18px;padding-bottom:6px;margin-bottom:4px;border-bottom:1px dashed #f0c87f}.score-breakdown>div{display:flex;justify-content:space-between;gap:10px;font-size:.82em}.score-breakdown em{color:#bde7df;font-style:normal;font-size:.88em}.score-breakdown b{font-size:1em}
 .score-breakdown .penalty-row b{color:#ff8d82}
 .score-summary .miss-total-row{margin-top:4px;padding:5px 0!important;border-top:1px dashed #f0c87f;color:#ffe3a7}.miss-total-row strong{display:grid;place-items:center;min-width:30px;height:25px;padding:0 8px;border-radius:99px;background:#ff795f;color:#fff8e9!important;font-size:15px!important}
-.credits-window{width:min(700px,54vw);height:145px;overflow:hidden;position:relative;margin:6px 0;background:#fff8e9e8;border:3px solid #f0c87f;border-radius:22px;box-shadow:inset 0 0 22px #e5b95e38,0 7px 20px #183b3a52;mask-image:linear-gradient(transparent,#000 14% 86%,transparent)}
-.credits-roll{color:#173f3d;font:800 clamp(17px,2vw,25px)/1.65 "Hachi Maru Pop","M PLUS Rounded 1c",sans-serif;text-align:center;animation:creditsFlow 14s linear both}
-.credits-roll p{margin:0 0 22px;white-space:nowrap;text-shadow:2px 2px 0 #fff,3px 3px 0 #f0c87f}
+.credits-window{position:absolute;top:50%;right:max(3vw,env(safe-area-inset-right));width:min(38vw,480px);height:min(48vh,270px);overflow:hidden;margin:0;background:#fff8e9ed;border:3px solid #f0c87f;border-radius:22px;box-shadow:inset 0 0 22px #e5b95e38,0 7px 20px #183b3a52;transform:translateY(-50%);mask-image:linear-gradient(transparent,#000 11% 89%,transparent)}
+.credits-roll{padding:0 18px;color:#173f3d;font:700 clamp(14px,1.55vw,20px)/1.6 "Noto Sans JP","Yu Gothic",sans-serif;text-align:center;animation:creditsFlow 17s linear both}
+.credits-roll p{max-width:420px;margin:0 auto 28px;text-wrap:balance;text-shadow:1px 2px 0 #fff}
 .end-screen.hidden .credits-roll{animation:none}
-@keyframes creditsFlow{0%{transform:translateY(150px);opacity:0}6%{opacity:1}88%{opacity:1}100%{transform:translateY(-185px);opacity:0}}
+@keyframes creditsFlow{0%{transform:translateY(270px);opacity:0}6%{opacity:1}90%{opacity:1}100%{transform:translateY(-115%);opacity:0}}
 .mobile-controls{display:none;position:absolute;z-index:7;left:18px;right:18px;bottom:16px;justify-content:space-between;pointer-events:none}
 .mobile-controls button{pointer-events:auto;width:62px;height:62px;border:2px solid #fff;border-radius:50%;background:#183b3ad1;color:#fff;font-size:25px;font-weight:900;box-shadow:0 5px 12px #183b3a48;touch-action:none}
 .mobile-controls .attack{background:#f4a62bde}.mobile-controls .jump{background:#ff795fe8}.jump small,.attack small{display:block;font-size:7px;letter-spacing:.1em}
@@ -84,7 +84,7 @@ footer{min-height:56px;padding:0 clamp(18px,4vw,56px);display:flex;align-items:c
 @media(max-width:950px) and (orientation:landscape){
   .splash-screen{background:linear-gradient(#fff8e938,#fff8e938),url("assets/tart-adventure-bg.png") center/cover;padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}
   .end-screen{padding:max(6px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
-  .end-screen .eyebrow{display:none}.end-screen h2{font-size:clamp(21px,6dvh,31px)}.end-medal{display:none}.new-record{padding:2px 10px;margin:1px 0 2px;font-size:10px;border-width:2px}.cheese-handoff{min-height:32px;padding:1px 8px;margin:1px 0 2px}.cheese-handoff span{font-size:19px}.cheese-handoff strong{font-size:8px}.score-summary{width:58vw;padding:4px 10px;border-radius:12px}.score-summary>div{font-size:9px;padding:1px 0}.score-summary .score-breakdown{gap:0 12px;padding-bottom:3px;margin-bottom:2px}.score-breakdown>div{font-size:8px}.score-total{margin-top:2px;padding-top:3px!important}.score-total strong{font-size:21px}.credits-window{height:62px;margin:1px 0}.credits-roll{font-size:12px}.credits-roll p{margin-bottom:9px}
+  .end-screen .eyebrow{display:none}.end-screen h2{font-size:clamp(21px,6dvh,31px)}.end-medal{display:none}.new-record{padding:2px 10px;margin:1px 0 2px;font-size:10px;border-width:2px}.cheese-handoff{min-height:32px;padding:1px 8px;margin:1px 0 2px}.cheese-handoff span{font-size:19px}.cheese-handoff strong{font-size:8px}.score-summary{width:58vw;padding:4px 10px;border-radius:12px}.score-summary>div{font-size:9px;padding:1px 0}.score-summary .score-breakdown{gap:0 12px;padding-bottom:3px;margin-bottom:2px}.score-breakdown>div{font-size:8px}.score-total{margin-top:2px;padding-top:3px!important}.score-total strong{font-size:21px}.credits-window{top:50%;right:max(2vw,env(safe-area-inset-right));width:36vw;height:min(56dvh,205px);margin:0;border-width:2px;border-radius:15px}.credits-roll{padding:0 10px;font-size:clamp(10px,2.8dvh,13px);line-height:1.55}.credits-roll p{margin-bottom:18px}
   .start-screen{
     justify-content:center;
     padding-top:max(14px,env(safe-area-inset-top));
@@ -106,3 +106,24 @@ footer{min-height:56px;padding:0 clamp(18px,4vw,56px);display:flex;align-items:c
   .start-screen .intro{font-size:9px;line-height:1.35;max-width:43vw}
   .hero-dog-photo{width:min(38vw,70dvh);right:max(5vw,env(safe-area-inset-right));bottom:0}
 }
+
+/* ストーリー画面の左右を中央へ寄せ、中央の余白を抑える */
+.start-screen{padding-left:clamp(48px,12vw,175px)}
+.start-screen .eyebrow,.start-screen h1,.start-screen .intro,.start-screen .primary-btn,.start-screen .controls-hint{max-width:min(560px,43vw)}
+.hero-dog-photo{right:7%}
+@media(max-width:950px) and (orientation:landscape){
+  .start-screen{padding-left:max(9vw,env(safe-area-inset-left));padding-right:max(4vw,env(safe-area-inset-right))}
+  .start-screen .eyebrow,.start-screen h1,.start-screen .intro,.start-screen .primary-btn{max-width:45vw}
+  .hero-dog-photo{right:max(8vw,env(safe-area-inset-right))}
+}
+@media(max-width:950px) and (orientation:landscape) and (max-height:420px){
+  .start-screen{padding-left:max(9vw,env(safe-area-inset-left));padding-right:max(4vw,env(safe-area-inset-right))}
+  .start-screen .intro{max-width:45vw}
+  .hero-dog-photo{right:max(8vw,env(safe-area-inset-right))}
+}
+
+/* スコア内訳の獲得数・倍率を同じ縦列に揃える */
+.score-breakdown>div{display:grid;grid-template-columns:minmax(0,1fr) 46px;align-items:center}
+.score-breakdown>div>b{text-align:right}
+.score-breakdown>div>span{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:5px}
+.score-breakdown>div>span>em{white-space:nowrap;text-align:right}

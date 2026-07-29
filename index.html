@@ -12,8 +12,8 @@
   <title>たるとの大冒険2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=M+PLUS+Rounded+1c:wght@700;800;900&family=Noto+Sans+JP:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
   <main class="game-shell">
@@ -64,7 +64,7 @@
         </div>
         <div class="version-badge" aria-label="ゲームのバージョン">
           <span>VERSION</span>
-          <b>1.6.1</b>
+          <b>1.7.4</b>
           <small>2026.07.29 UPDATE</small>
         </div>
       </section>
@@ -101,17 +101,17 @@
         </div>
         <div id="greatClear" class="great-clear hidden" role="status" aria-label="3ミス以内のグレートクリア">
           <span>✦</span>
-          <div><small>3 MISSES OR LESS</small><strong>GREAT CLEAR!</strong></div>
+          <div><strong>GREAT CLEAR!</strong></div>
           <span>✦</span>
         </div>
         <div id="goodClear" class="good-clear hidden" role="status" aria-label="6ミス以内のグッドクリア">
           <span>●</span>
-          <div><small>4–6 MISSES</small><strong>GOOD CLEAR!</strong></div>
+          <div><strong>GOOD CLEAR!</strong></div>
           <span>●</span>
         </div>
         <div id="tryClear" class="try-clear hidden" role="status" aria-label="7ミス以上">
           <span>▲</span>
-          <div><small>7+ MISSES</small><strong>まだまだ伸びるよ！</strong></div>
+          <div><strong>まだまだ伸びるよ！</strong></div>
           <span>▲</span>
         </div>
         <p class="eyebrow">ADVENTURE COMPLETE!</p>
@@ -152,11 +152,7 @@
           <div class="score-total"><span>TOTAL SCORE</span><strong id="totalScore">0</strong></div>
         </div>
         <div class="credits-window" aria-label="エンディングメッセージ">
-          <div class="credits-roll">
-            <p>大好きなとーちゃんとかーちゃんが待ってたよ</p>
-            <p>今夜のごはんは何だろうな</p>
-            <p>たるとの戦いはまだまだ続く</p>
-          </div>
+          <div id="creditsRoll" class="credits-roll"></div>
         </div>
         <button id="retryBtn" class="primary-btn"><span>もういちど遊ぶ</span><b>↻</b></button>
       </section>
@@ -175,6 +171,6 @@
       <span class="legend">🥕 にんじんトイ　 🦴 骨　 <i class="dot teal"></i> ゴール</span>
     </footer>
   </main>
-  <script src="game.js?v=19"></script>
+  <script src="game.js?v=21"></script>
 </body>
 </html>

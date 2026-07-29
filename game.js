@@ -164,6 +164,18 @@ function enemyResult(normalText){
   if(catsDefeated+crowsDefeated===enemies.length)celebrate("野良ねことカラスを全部撃破！");
   else toast(normalText);
 }
+const endingMessages={
+  perfect:["たると、ついにやったな。。","とんでもないワンコだ","今夜は帰って牛肉だ","でも、たるとの戦いはまだまだ続く"],
+  great:["グレートだぜ、たると","今夜の夕飯はチーズ多めに入れてやるよ","でもパーフェクトまであと一歩がんばろう","たるとの戦いはまだまだ続く"],
+  good:["まぁまぁだな、たるとさん","でもまだまだ上をめざそう","とりあえず今夜の夕飯はシャケといつものカリカリだ","たるとの戦いはまだまだ続く"],
+  try:["話にならないぞ、たるとさん","今夜はごはん抜きで特訓だ","たるとの戦いはまだまだ続く"]
+};
+function setEndingMessages(rank){
+  const roll=$("#creditsRoll");roll.innerHTML="";
+  endingMessages[rank].forEach(message=>{
+    const line=document.createElement("p");line.textContent=message;roll.appendChild(line);
+  });
+}
 function showClearEffect(element,visible){
   element.classList.add("hidden");
   if(!visible)return;
@@ -313,6 +325,7 @@ function update(){
     const greatClear=!perfect&&missTotal<=3;
     const goodClear=!perfect&&missTotal>=4&&missTotal<=6;
     const tryClear=!perfect&&missTotal>=7;
+    setEndingMessages(perfect?"perfect":greatClear?"great":goodClear?"good":"try");
     clearPerfect=perfect;clearGreat=greatClear;clearGood=goodClear;clearTry=tryClear;
     if(perfect){
       [[520,620],[660,740],[780,860],[1040,1020]].forEach(([frequency,delay],index)=>
@@ -327,17 +340,21 @@ function update(){
       setTimeout(()=>beep(360,.14,"triangle"),560);
       setTimeout(()=>beep(430,.16,"triangle"),710);
     }
-    $("#carrotCount").textContent=carrots+"個 × 100";
+    const totalCarrots=items.filter(item=>item.type==="carrot").length;
+    const totalBones=items.filter(item=>item.type==="bone").length;
+    const totalCats=enemies.filter(enemy=>enemy.type==="cat").length;
+    const totalCrows=enemies.filter(enemy=>enemy.type==="crow").length;
+    $("#carrotCount").textContent=`${carrots}/${totalCarrots}個 × 100`;
     $("#carrotScore").textContent=(carrots*100).toLocaleString("ja-JP");
-    $("#boneCount").textContent=bones+"個 × 50";
+    $("#boneCount").textContent=`${bones}/${totalBones}個 × 50`;
     $("#boneScore").textContent=(bones*50).toLocaleString("ja-JP");
-    $("#catCount").textContent=catsDefeated+"匹 × 100";
+    $("#catCount").textContent=`${catsDefeated}/${totalCats}匹 × 100`;
     $("#catScore").textContent=(catsDefeated*100).toLocaleString("ja-JP");
-    $("#crowCount").textContent=crowsDefeated+"羽 × 200";
+    $("#crowCount").textContent=`${crowsDefeated}/${totalCrows}羽 × 200`;
     $("#crowScore").textContent=(crowsDefeated*200).toLocaleString("ja-JP");
-    $("#duckCount").textContent=duckJumps+"回 × 150";
+    $("#duckCount").textContent=`${duckJumps}/${ducks.length}回 × 150`;
     $("#duckScore").textContent=(duckJumps*150).toLocaleString("ja-JP");
-    $("#cheeseCount").textContent=cheeseTaken?"1個 × 1000":"0個 × 1000";
+    $("#cheeseCount").textContent=`${cheeseTaken?1:0}/1個 × 1000`;
     $("#cheeseScore").textContent=cheeseTaken?"1,000":"0";
     $("#damageCount").textContent=damageCount+"回 × −50";
     $("#damageScore").textContent=(damageCount*-50).toLocaleString("ja-JP");
@@ -506,6 +523,7 @@ function draw(){
 function loop(t){if(running&&t-last>12){update();last=t}draw();requestAnimationFrame(loop)}
 function showPerfectPreview(){
   running=false;won=true;
+  setEndingMessages("perfect");
   $("#startScreen").classList.add("hidden");$("#storyScreen").classList.add("hidden");
   $("#endScreen").classList.remove("hidden");$("#perfectClear").classList.remove("hidden");
   $("#perfectClear").classList.add("preview-still");
