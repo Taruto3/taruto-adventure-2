@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
   <main class="game-shell">
@@ -64,7 +64,7 @@
         </div>
         <div class="version-badge" aria-label="ゲームのバージョン">
           <span>VERSION</span>
-          <b>1.5.2</b>
+          <b>1.6.1</b>
           <small>2026.07.29 UPDATE</small>
         </div>
       </section>
@@ -99,10 +99,20 @@
           </div>
           <div class="perfect-stamp"><span>★</span><b>PERFECT CLEAR</b><span>★</span></div>
         </div>
-        <div id="greatClear" class="great-clear hidden" role="status" aria-label="7000点オーバー">
+        <div id="greatClear" class="great-clear hidden" role="status" aria-label="3ミス以内のグレートクリア">
           <span>✦</span>
-          <div><small>7,000 OVER!</small><strong>GREAT SCORE!</strong></div>
+          <div><small>3 MISSES OR LESS</small><strong>GREAT CLEAR!</strong></div>
           <span>✦</span>
+        </div>
+        <div id="goodClear" class="good-clear hidden" role="status" aria-label="6ミス以内のグッドクリア">
+          <span>●</span>
+          <div><small>4–6 MISSES</small><strong>GOOD CLEAR!</strong></div>
+          <span>●</span>
+        </div>
+        <div id="tryClear" class="try-clear hidden" role="status" aria-label="7ミス以上">
+          <span>▲</span>
+          <div><small>7+ MISSES</small><strong>まだまだ伸びるよ！</strong></div>
+          <span>▲</span>
         </div>
         <p class="eyebrow">ADVENTURE COMPLETE!</p>
         <h2>やったね、たると！</h2>
@@ -134,10 +144,11 @@
             <div><span>カラス <em id="crowCount">0羽</em></span><b id="crowScore">0</b></div>
             <div><span>カモさんジャンプ <em id="duckCount">0回</em></span><b id="duckScore">0</b></div>
             <div><span>おみやげチーズ <em id="cheeseCount">0個</em></span><b id="cheeseScore">0</b></div>
-            <div class="penalty-row"><span>ダメージ減点 <em id="damageCount">0回</em></span><b id="damageScore">0</b></div>
+            <div class="penalty-row"><span>ダメージ・川落下 <em id="damageCount">0回</em></span><b id="damageScore">0</b></div>
           </div>
           <div><span>アクション・アイテム</span><b id="actionScore">0</b></div>
           <div><span>タイムボーナス（残り0.1秒×1）</span><b id="timeBonus">0</b></div>
+          <div class="miss-total-row"><span>ミスカウント合計</span><strong id="missTotal">0</strong></div>
           <div class="score-total"><span>TOTAL SCORE</span><strong id="totalScore">0</strong></div>
         </div>
         <div class="credits-window" aria-label="エンディングメッセージ">
@@ -164,6 +175,6 @@
       <span class="legend">🥕 にんじんトイ　 🦴 骨　 <i class="dot teal"></i> ゴール</span>
     </footer>
   </main>
-  <script src="game.js?v=17"></script>
+  <script src="game.js?v=19"></script>
 </body>
 </html>

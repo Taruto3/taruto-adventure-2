@@ -22,7 +22,7 @@ const LAST_DUCK_X=3420+SEGMENT+80+FINAL_SHIFT;
 const baseRivers=[{x:700,w:500},{x:1700,w:550},{x:2600,w:1040}];
 const finalRiver={x:8138+GOAL_SHIFT,w:242,respawnX:7440+GOAL_SHIFT};
 const riverZones=[...baseRivers,...baseRivers.map((r,index)=>({...r,x:r.x+SEGMENT,w:index===2?7550+GOAL_SHIFT-(r.x+SEGMENT):r.w})),finalRiver];
-let running=false,won=false,last=0,camera=0,carrots=0,bones=0,catsDefeated=0,crowsDefeated=0,duckJumps=0,damageCount=0,cheeseTaken=false,lives=3,score=0,timeLeft=RUN_TIME*10,endTime=0,sound=true,toastTimer,orientationTimer,clearPerfect=false,clearGreat=false;
+let running=false,won=false,last=0,camera=0,carrots=0,bones=0,catsDefeated=0,crowsDefeated=0,duckJumps=0,damageCount=0,cheeseTaken=false,lives=3,score=0,timeLeft=RUN_TIME*10,endTime=0,sound=true,toastTimer,orientationTimer,clearPerfect=false,clearGreat=false,clearGood=false,clearTry=false;
 const keys={jump:false,attack:false};
 let player={x:150,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
 const basePlatforms=[
@@ -54,8 +54,8 @@ let cheese={x:8260+GOAL_SHIFT,y:430,w:54,h:42,taken:false};
 function reset(){
   keys.jump=false;keys.attack=false;
   player={x:190,y:groundY-92,w:80,h:92,vx:0,vy:0,onGround:false,inv:0,dir:1,attack:0,cooldown:0,attackDir:1};
-  $("#newRecord").classList.add("hidden");$("#perfectClear").classList.add("hidden");$("#perfectClear").classList.remove("preview-still");$("#greatClear").classList.add("hidden");
-  camera=0;carrots=0;bones=0;catsDefeated=0;crowsDefeated=0;duckJumps=0;damageCount=0;splashes=[];cheeseTaken=false;cheese={x:8260+GOAL_SHIFT,y:430,w:54,h:42,taken:false};lives=3;score=0;timeLeft=RUN_TIME*10;endTime=performance.now()+RUN_TIME*1000;won=false;clearPerfect=false;clearGreat=false;
+  $("#newRecord").classList.add("hidden");$("#perfectClear").classList.add("hidden");$("#perfectClear").classList.remove("preview-still");$("#greatClear").classList.add("hidden");$("#goodClear").classList.add("hidden");$("#tryClear").classList.add("hidden");
+  camera=0;carrots=0;bones=0;catsDefeated=0;crowsDefeated=0;duckJumps=0;damageCount=0;splashes=[];cheeseTaken=false;cheese={x:8260+GOAL_SHIFT,y:430,w:54,h:42,taken:false};lives=3;score=0;timeLeft=RUN_TIME*10;endTime=performance.now()+RUN_TIME*1000;won=false;clearPerfect=false;clearGreat=false;clearGood=false;clearTry=false;
   const baseItems=[[720,415,"carrot"],[995,325,"bone"],[1320,535,"carrot"],[1740,405,"carrot"],[2010,295,"bone"],[2360,535,"carrot"],[2810,330,"bone"],[3070,245,"carrot"]];
   items=[...baseItems,...baseItems.map(([x,y,type])=>[x+SEGMENT,y,type])]
     .filter(([x,,type])=>type!=="carrot"||![1320,5740,7070].includes(x))
@@ -177,10 +177,14 @@ function refreshClearEffects(){
     if(!won||!isLandscapeView()){
       showClearEffect($("#perfectClear"),false);
       showClearEffect($("#greatClear"),false);
+      showClearEffect($("#goodClear"),false);
+      showClearEffect($("#tryClear"),false);
       return;
     }
     showClearEffect($("#perfectClear"),clearPerfect);
     showClearEffect($("#greatClear"),clearGreat);
+    showClearEffect($("#goodClear"),clearGood);
+    showClearEffect($("#tryClear"),clearTry);
   },180);
 }
 addEventListener("orientationchange",refreshClearEffects);
@@ -300,22 +304,28 @@ function update(){
   if(player.x>goalX-70&&!won){
     won=true;running=false;syncMusic();beep(620,.15);setTimeout(()=>beep(780,.15),140);setTimeout(()=>beep(1040,.4),280);
     const bonus=timeLeft,total=score+bonus;
-    const perfect=DEBUG_PERFECT||(
-      items.every(item=>item.taken)
-      && duckJumps===ducks.length
-      && catsDefeated+crowsDefeated===enemies.length
-      && damageCount===0
-      && cheeseTaken
-    );
-    const greatScore=!perfect&&total>=7000;
-    clearPerfect=perfect;clearGreat=greatScore;
+    const missedItems=items.filter(item=>!item.taken).length;
+    const missedDucks=ducks.filter(duck=>!duck.scored).length;
+    const missedEnemies=Math.max(0,enemies.length-catsDefeated-crowsDefeated);
+    const missedCheese=cheeseTaken?0:1;
+    const missTotal=missedItems+missedDucks+missedEnemies+damageCount+missedCheese;
+    const perfect=DEBUG_PERFECT||missTotal===0;
+    const greatClear=!perfect&&missTotal<=3;
+    const goodClear=!perfect&&missTotal>=4&&missTotal<=6;
+    const tryClear=!perfect&&missTotal>=7;
+    clearPerfect=perfect;clearGreat=greatClear;clearGood=goodClear;clearTry=tryClear;
     if(perfect){
       [[520,620],[660,740],[780,860],[1040,1020]].forEach(([frequency,delay],index)=>
         setTimeout(()=>beep(frequency,index===3?.38:.13,"triangle"),delay)
       );
-    }else if(greatScore){
+    }else if(greatClear){
       setTimeout(()=>beep(620,.12,"triangle"),520);
       setTimeout(()=>beep(820,.2,"triangle"),670);
+    }else if(goodClear){
+      setTimeout(()=>beep(570,.16,"triangle"),560);
+    }else if(tryClear){
+      setTimeout(()=>beep(360,.14,"triangle"),560);
+      setTimeout(()=>beep(430,.16,"triangle"),710);
     }
     $("#carrotCount").textContent=carrots+"個 × 100";
     $("#carrotScore").textContent=(carrots*100).toLocaleString("ja-JP");
@@ -333,6 +343,7 @@ function update(){
     $("#damageScore").textContent=(damageCount*-50).toLocaleString("ja-JP");
     $("#actionScore").textContent=score.toLocaleString("ja-JP");
     $("#timeBonus").textContent=bonus.toLocaleString("ja-JP");
+    $("#missTotal").textContent=missTotal;
     $("#totalScore").textContent=total.toLocaleString("ja-JP");
     const isNewRecord=total>highScore;
     if(isNewRecord){highScore=total;saveHighScore(highScore)}
@@ -342,10 +353,14 @@ function update(){
     $("#endScreen").classList.remove("hidden");$("#hud").classList.add("hidden");$("#mobileControls").classList.add("hidden");
     if(isLandscapeView()){
       showClearEffect($("#perfectClear"),perfect);
-      showClearEffect($("#greatClear"),greatScore);
+      showClearEffect($("#greatClear"),greatClear);
+      showClearEffect($("#goodClear"),goodClear);
+      showClearEffect($("#tryClear"),tryClear);
     }else{
       showClearEffect($("#perfectClear"),false);
       showClearEffect($("#greatClear"),false);
+      showClearEffect($("#goodClear"),false);
+      showClearEffect($("#tryClear"),false);
     }
   }
   camera+=(Math.max(0,Math.min(worldW-W,player.x-W*.36))-camera)*.08;
