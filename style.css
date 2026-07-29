@@ -127,3 +127,11 @@ footer{min-height:56px;padding:0 clamp(18px,4vw,56px);display:flex;align-items:c
 .score-breakdown>div>b{text-align:right}
 .score-breakdown>div>span{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:5px}
 .score-breakdown>div>span>em{white-space:nowrap;text-align:right}
+
+/* iPhone横向きでメッセージ欄がスコア欄へ重ならない幅にする */
+@media(max-width:950px) and (orientation:landscape){
+  .credits-window{
+    width:min(28vw,198px);
+    right:max(1.5vw,env(safe-area-inset-right));
+  }
+}
