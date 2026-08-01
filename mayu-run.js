@@ -1,7 +1,6 @@
 const canvas=document.getElementById("runGame"),ctx=canvas.getContext("2d"),$=s=>document.querySelector(s);
 const W=1280,H=720,groundY=590,worldW=16200,goalX=16050,RUN_TIME=405,MAX_CHASE=620;
 const MAYU_HIGH_SCORE_KEY="taruto-adventure-3-high-score";
-const SHOW_DEBUG_NUMBERS=true;
 let running=false,paused=false,pauseStarted=0,won=false,last=0,camera=0,lives=5,score=0,timeLeft=RUN_TIME*10,endTime=0;
 let player,items,enemies,ducks,projectiles,musicNotes,barkWaves,thrownBones,splashes,sandPuffs,duckHearts,rainbowBerry,chase=0,chaseRetreat=0,boneRetreating=false,goldPower=0,mayuPowerFx=0,tarutoHappy=0,tarutoStun=0,bites=0,defeated=0,duckJumps=0,duckScoreTotal=0,duckSpawnTimer=0,actionMistakes=0,messageTimer,actionMessage="",actionMessageUntil=0,jumpHeld=false,jumpHold=0;
 let audioCtx,lastBarkCycle=-1,gameOverSequence=false,gameOverTimers=[],mapDebugMode=false,mapDebugPan=0,mapDebugDragX=null;
@@ -33,7 +32,7 @@ const stairs=[
 ];
 const slopes=[{x:5760,w:660,rise:300},{x:12200,w:650,rise:250}];
 const sandZones=[{x:1800,w:240},{x:3500,w:320},{x:5700,w:260},{x:7200,w:320},{x:9150,w:450},{x:11600,w:450},{x:13200,w:400}].map((zone,index)=>({...zone,debugNo:index+1}));
-const cliffZones=[{x:2750,w:260},{x:4600,w:300},{x:6420,w:280},{x:7900,w:400},{x:10300,w:350},{x:13850,w:320}].map((zone,index)=>({...zone,debugNo:index+1+(zone.x>12600?1:0)}));
+const cliffZones=[{x:2750,w:260},{x:4600,w:300},{x:6420,w:280},{x:7900,w:400},{x:10300,w:350},{x:13850,w:320}].map((zone,index)=>({...zone,debugNo:index+1}));
 const mayuSprite=new Image();mayuSprite.src="assets/mayu-game-v1.png";
 function enemySurfaceY(enemy,maxRise=Infinity){
   const center=enemy.x+29,surfaces=[];
@@ -89,9 +88,9 @@ function reset(){
     {type:"drunk",x:14925,y:groundY-76,min:14908,max:14952,v:1.1,alive:true,throw:82,debugNo:38}
   );
   enemies.forEach(enemy=>{if(enemy.type==="drunk"){enemy.y-=29;enemy.throw*=.5;enemy.y=enemySurfaceY(enemy)}});
-  const itemOrder=[...items.filter(item=>item.debugNo==null),rainbowBerry].sort((a,b)=>a.x-b.x||(a===rainbowBerry?1:-1));itemOrder.forEach((item,index)=>item.debugNo=index+1+(item.x>1110?1:0)+(item.x>15700?1:0));
-  const removedDrunkXs=[9000,9900,10430,12620,13000,13700,14300,15180,15400];enemies.filter(e=>e.type==="drunk"&&e.debugNo==null).sort((a,b)=>a.x-b.x).forEach((enemy,index)=>enemy.debugNo=index+1+removedDrunkXs.filter(x=>enemy.x>x).length);
-  ledges.slice().sort((a,b)=>a.x-b.x).forEach((ledge,index)=>ledge.debugNo=index+1+(ledge.x>2640?2:0)+(ledge.x>12720?1:0));
+  [...items,rainbowBerry].sort((a,b)=>a.x-b.x||(a===rainbowBerry?1:-1)).forEach((item,index)=>item.debugNo=index+1);
+  enemies.filter(e=>e.type==="drunk").sort((a,b)=>a.x-b.x).forEach((enemy,index)=>enemy.debugNo=index+1);
+  ledges.slice().sort((a,b)=>a.x-b.x).forEach((ledge,index)=>ledge.debugNo=index+1);
   ducks=[];
   updateHud();
 }
@@ -251,7 +250,7 @@ function drawWorld(){
   items.forEach(i=>{if(i.taken)return;ctx.save();ctx.translate(i.x,i.y+Math.sin(i.bob)*5);i.type==="strawberry"?drawStrawberry():i.type==="goldStrawberry"?drawGoldenStrawberry():i.type==="bone"?drawBone():drawGrape();ctx.restore()});if(!rainbowBerry.taken){ctx.save();ctx.translate(rainbowBerry.x,rainbowBerry.y);drawRainbowStrawberry();ctx.restore()}ducks.forEach(drawDuck);enemies.forEach(e=>{if(e.alive)(e.type==="gal"?drawGal:drawDrunk)(e.x,e.y,e.charge>0)});projectiles.forEach(drawMug);musicNotes.forEach(drawMusicNote);barkWaves.forEach(drawBarkWave);thrownBones.forEach(b=>{ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.spin);drawBone();ctx.restore()});sandPuffs.forEach(p=>{ctx.globalAlpha=p.life/28*.6;ctx.fillStyle="#f6d99a";ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()});splashes.forEach(s=>{ctx.globalAlpha=s.life/32;ctx.fillStyle="#e5fbff";ctx.beginPath();ctx.ellipse(s.x,s.y,s.r*.7,s.r*1.4,0,0,7);ctx.fill()});ctx.globalAlpha=1;
   duckHearts.forEach(drawHeartParticle);
   drawGoal();
-  if(SHOW_DEBUG_NUMBERS){drawDebugMarkers();drawTerrainDebugMarkers()}
+  if(mapDebugMode){drawDebugMarkers();drawTerrainDebugMarkers()}
   const mayuHeight=player.y-(groundY-player.h),tarutoLift=Math.max(-330,Math.min(0,mayuHeight*.55));
   if(!mapDebugMode){drawTaruto(camera+55+chase,groundY-83+tarutoLift);drawMayu()}ctx.restore();
 }
