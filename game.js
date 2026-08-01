@@ -4,6 +4,7 @@ const $ = s => document.querySelector(s);
 const bg = new Image(); bg.src = "assets/tart-adventure-bg.png";
 const bgm = new Audio("assets/flowerbed-fields.ogg"); bgm.loop=true; bgm.volume=.2;
 const HIGH_SCORE_KEY="taruto-adventure-2-high-score";
+const MAYU_HIGH_SCORE_KEY="taruto-adventure-3-high-score";
 const DEBUG_PERFECT=new URLSearchParams(location.search).get("debug-perfect")==="1";
 
 function loadHighScore(){
@@ -12,6 +13,10 @@ function loadHighScore(){
 }
 function saveHighScore(value){
   try{localStorage.setItem(HIGH_SCORE_KEY,String(value))}catch(_){}
+}
+function loadMayuHighScore(){
+  try{return Math.max(0,Number(localStorage.getItem(MAYU_HIGH_SCORE_KEY))||0)}
+  catch(_){return 0}
 }
 let highScore=loadHighScore();
 
@@ -89,6 +94,7 @@ function updateHud(){
   $("#carrotHud").textContent=`${carrots}/${items.filter(item=>item.type==="carrot").length}`;
   $("#boneHud").textContent=`${bones}/${items.filter(item=>item.type==="bone").length}`;
   $("#highScoreValue").textContent=highScore.toLocaleString("ja-JP");
+  $("#mayuHighScoreValue").textContent=loadMayuHighScore().toLocaleString("ja-JP");
 }
 async function enterGameMode(){
   const root=document.documentElement;

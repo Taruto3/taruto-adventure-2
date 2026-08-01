@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#da786b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>たるとの大冒険3 たるとの大暴走</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="mayu-run.css?v=23">
+</head>
+<body>
+  <audio id="bgm" src="assets/mayu-brassy-bubbles.mp3?v=1" loop preload="auto"></audio>
+  <main class="run-shell">
+    <canvas id="runGame" width="1280" height="720" aria-label="たるとの大冒険3 たるとの大暴走"></canvas>
+    <div id="hud" class="hud hidden">
+      <div class="hud-pill life"><span>👩🏻</span><b id="lives">♥ ♥ ♥</b></div>
+      <div class="hud-pill"><small>SCORE</small><b id="score">0</b></div>
+      <div class="hud-pill"><small>BEST 3</small><b id="mayuBest">0</b></div>
+      <div class="hud-pill"><small>TIME</small><b id="time">405.0</b></div>
+      <div class="hud-pill distance"><small>たると距離</small><b id="distance">400</b></div>
+      <div id="powerBadge" class="boost-badge hidden">⭐ 音符3方向</div>
+      <button id="homeBtn" class="hud-action home" type="button">← HOME</button>
+      <button id="retryBtn" class="hud-action retry" type="button">↻ リトライ</button>
+      <button id="pauseBtn" class="hud-action pause" type="button" aria-label="一時停止"><span>Ⅱ</span> ポーズ</button>
+    </div>
+
+    <section id="titleScreen" class="screen title-screen">
+      <div class="title-copy">
+        <p>MAYU ESCAPE MISSION</p>
+        <h1><small>たるとの大冒険3</small>たるとの<br>大暴走</h1>
+        <p class="lead">たるとが大好きなまゆを見つけた！<br>クラリネットを持って、全力で逃げ切れ！</p>
+        <button id="storyBtn" class="primary-btn" type="button"><span>逃走開始！</span><b>→</b></button>
+      </div>
+      <div class="title-scene" aria-hidden="true"><img class="mayu-title-art" src="assets/mayu-title-v2.png" alt=""><img class="taruto" src="assets/taruto-card-v1.png" alt=""><i>💨</i></div>
+    </section>
+
+    <section id="storyScreen" class="screen story-screen hidden">
+      <div class="story-card">
+        <p>STORY</p><h2>まゆ、逃げて！</h2>
+        <div class="relationship"><span>🐕</span><b>だいすき！</b><i>→</i><span>👩🏻</span><b>ちょっと苦手…</b></div>
+        <p>黒髪の女子大生・まゆは、とーちゃんとかーちゃんの姪っ子。<br>たるとはまゆが大好きだけど、まゆはたるとがちょっと苦手。</p>
+        <p>追いつかれる前に、ゴールで待つとーちゃんとかーちゃんのところへ逃げよう！<br>いちごで回復し、ホネッコでたるとの気をそらそう。飛んでくるカモさんには音符を届けて喜んでもらおう！</p>
+        <button id="startBtn" class="primary-btn" type="button"><span>全力で逃げる！</span><b>→</b></button>
+        <small>自動で走るよ　SPACE：ジャンプ（長押しで高く）　X：音符ショット</small>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen result-screen hidden">
+      <div class="result-copy">
+        <p>ESCAPE COMPLETE!</p><h2>まゆ、逃げ切った！</h2>
+        <div class="goal-family" aria-label="ゴールで待つとーちゃんとかーちゃん">
+          <img src="assets/mayu-title-v2.png" alt="まゆ">
+          <span class="result-parents" aria-hidden="true"><svg viewBox="0 0 72 44" role="img" aria-label="とーちゃんとかーちゃん"><circle class="parent-head dad" cx="20" cy="11" r="8"/><path class="parent-hair" d="M12 10c1-10 16-11 17 1-4-3-12-4-17-1z"/><path class="parent-body dad" d="M6 42c1-17 7-23 14-23s13 6 14 23z"/><circle class="parent-head mom" cx="52" cy="11" r="8"/><path class="parent-hair" d="M43 13c-1-15 19-15 18 0l-4 7-2-5c-3 3-7 2-10 0l-2 5z"/><path class="parent-body mom" d="M38 42c1-17 7-23 14-23s13 6 14 23z"/><path class="parent-heart" d="M36 20c-5-6-12 2 0 10 12-8 5-16 0-10z"/></svg></span>
+          <b>とーちゃん　かーちゃん</b>
+        </div>
+        <div class="score-summary"><div class="score-breakdown">
+          <div><span>いちご <em id="strawberryResult">0/0個 ×100</em></span><b id="strawberryScore">0</b></div>
+          <div><span>ぶどう <em id="chocolateResult">0/0房 ×50</em></span><b id="chocolateScore">0</b></div>
+          <div><span>ホネッコ <em id="boneResult">0/0個 ×50</em></span><b id="boneScore">0</b></div>
+          <div><span>金のいちご <em id="goldResult">0/2個 ×300</em></span><b id="goldScore">0</b></div>
+          <div><span>虹色のいちご <em id="rainbowResult">0/1個 ×1500</em></span><b id="rainbowScore">0</b></div>
+          <div><span>酔っ払い <em id="enemyResult">0/0人 ×100</em></span><b id="enemyScore">0</b></div>
+          <div><span>カモさん退散 <em id="duckResult">0羽</em></span><b id="duckScore">0</b></div>
+          <div class="penalty-row"><span>ダメージ・落下 <em id="damageResult">0回 ×-50</em></span><b id="damageScore">0</b></div>
+        </div><div><span>アクション・アイテム</span><b id="actionScore">0</b></div><div><span>タイムボーナス（残り0.1秒×1）</span><b id="timeBonus">0</b></div><div class="miss-total-row"><span>ミスカウント合計</span><strong id="missTotal">0</strong></div><div class="score-total"><span>TOTAL SCORE</span><strong id="totalScore">0</strong></div></div>
+        <div class="result-best"><small>ADVENTURE 3 BEST</small><b id="resultBest">0</b><em id="newBestLabel" class="hidden">NEW RECORD!</em></div>
+        <div class="grade-panel">
+          <small>FINAL GRADE</small><b id="resultGrade">PERFECT</b>
+        </div>
+        <button id="againBtn" class="primary-btn" type="button"><span>もう一度逃げる</span><b>↻</b></button><a href="index.html">ゲームひろばへ</a>
+      </div>
+      <div class="mayu-credits-window" aria-label="エンディングメッセージ"><div id="mayuCreditsRoll" class="mayu-credits-roll"></div></div>
+      <div id="perfectCelebration" class="perfect-celebration hidden" aria-hidden="true">
+        <div class="perfect-rays"></div>
+        <div class="perfect-title"><small>NO MISS COMPLETE!</small><strong>PERFECT!</strong><span>★ まゆ、完全逃走！ ★</span></div>
+        <i>★</i><i>●</i><i>◆</i><i>★</i><i>●</i><i>◆</i><i>★</i><i>●</i><i>◆</i><i>★</i><i>●</i><i>◆</i>
+      </div>
+      <div id="highScoreCelebration" class="high-score-celebration hidden" aria-hidden="true"><small>記録更新！</small><strong>NEW HIGH SCORE!</strong></div>
+    </section>
+
+    <div id="mobileControls" class="mobile-controls hidden">
+      <button id="attackBtn" class="attack" type="button">♪<small>NOTE SHOT</small></button>
+      <button id="jumpBtn" class="jump" type="button">↑<small>JUMP</small></button>
+    </div>
+    <div id="pauseOverlay" class="pause-overlay hidden" aria-live="polite"><small>GAME PAUSED</small><strong>一時停止中</strong><span>右上の ▶ 再開 でゲームに戻ります</span></div>
+    <div id="gameOverOverlay" class="game-over-overlay hidden" aria-live="assertive"><small>GAME OVER</small><strong>まゆは力尽きました</strong><b id="restartCount">3</b><span>スタート地点から再開します</span></div>
+    <div id="biteEffect" class="bite-effect hidden" aria-hidden="true"><div class="bite-jaw top"></div><div class="bite-jaw bottom"></div><strong>ガブッ!!</strong><span>たるとに噛まれた！</span></div>
+    <div id="message" class="message hidden">たるとが追いかけてくる！</div>
+    <div class="rotate-notice"><span>↻</span><b>スマホを横向きにしてね</b></div>
+  </main>
+  <script src="mayu-run.js?v=69"></script>
+</body>
+</html>

@@ -17,6 +17,11 @@ canvas{display:block;width:100%;height:auto;max-height:calc(100vh - 128px);aspec
 .splash-btn:hover{transform:scale(1.15) translateY(-3px)}
 .game-hub{display:flex;flex-direction:column;align-items:center}.hub-eyebrow{margin:0 0 3px;color:#c54c3a;font:900 9px "Trebuchet MS",sans-serif;letter-spacing:.2em}.hub-title{margin:0 0 14px;color:#183b3a;font:900 clamp(22px,4vw,42px) "Hachi Maru Pop","M PLUS Rounded 1c",sans-serif;text-shadow:2px 3px 0 #fff8e9}.game-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,190px));justify-content:center;gap:18px;width:min(760px,90vw)}.game-card{padding:8px 8px 11px;border:3px solid #fff8e9;border-radius:23px;background:#fffaf0;color:#183b3a;box-shadow:0 8px 0 #173f3d,0 15px 28px #183b3a66;cursor:pointer;transition:.18s}.game-card:hover{transform:translateY(-4px);box-shadow:0 12px 0 #173f3d,0 19px 32px #183b3a66}.game-card:active{transform:translateY(5px);box-shadow:0 3px 0 #173f3d}.game-card-art{position:relative;display:block;height:118px;overflow:hidden;border-radius:15px;background:linear-gradient(145deg,#bde7df,#ffc88d)}.game-card-art img{width:100%;height:100%;object-fit:cover;object-position:center 38%}.game-card-art i{position:absolute;right:7px;bottom:7px;padding:3px 8px;border-radius:99px;background:#ff795f;color:#fff;font:900 8px "Trebuchet MS",sans-serif;letter-spacing:.12em}.game-card strong{display:block;margin:9px 2px 1px;font:900 15px "Hachi Maru Pop","M PLUS Rounded 1c",sans-serif}.game-card small{display:block;color:#1d8177;font-size:8px;font-weight:900;letter-spacing:.12em}
 .version-badge{position:absolute;left:max(18px,env(safe-area-inset-left));bottom:max(16px,env(safe-area-inset-bottom));display:grid;grid-template-columns:auto auto;align-items:center;gap:1px 7px;padding:7px 11px;border:1px solid #fff8e9c9;border-radius:11px;background:#183b3abf;color:#fff8e9;box-shadow:0 5px 15px #183b3a3d;text-align:left;font-family:"Trebuchet MS",sans-serif}.version-badge span{color:#ffc34c;font-size:7px;font-weight:900;letter-spacing:.16em}.version-badge b{font-size:13px;line-height:1}.version-badge small{grid-column:1/-1;color:#d9eee7;font-size:6px;font-weight:700;letter-spacing:.08em}
+.game-card-subtitle{display:block;margin-top:2px;color:#9b4e6e;font:900 12px "Hachi Maru Pop","M PLUS Rounded 1c",sans-serif;line-height:1.25}
+.game-card-best{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:7px 2px 0;padding-top:6px;border-top:1px dashed #d8bfa4;color:#183b3a}.game-card-best small{color:#9b4e6e;font:900 7px "Trebuchet MS",sans-serif;letter-spacing:.1em}.game-card-best b{color:#d95145;font:900 13px "Trebuchet MS",sans-serif}
+.card-status{position:absolute;z-index:5;left:7px;top:7px;padding:4px 9px;border:2px solid #fff;border-radius:999px;color:#fff;font:900 9px "M PLUS Rounded 1c",sans-serif;line-height:1;letter-spacing:.08em;box-shadow:0 3px 7px #28343c66;transform:rotate(-4deg)}.card-status.fixed{background:#218b72}.card-status.developing{background:#e45362;animation:statusPulse 1.2s ease-in-out infinite alternate}@keyframes statusPulse{to{transform:rotate(-4deg) scale(1.08);filter:brightness(1.12)}}
+@media(max-width:950px) and (orientation:landscape){.game-card-subtitle{font-size:10px}}
+@media(max-width:950px) and (orientation:landscape){.game-card-best{margin-top:4px;padding-top:3px}.game-card-best small{font-size:6px}.game-card-best b{font-size:10px}}
 .hidden{opacity:0!important;pointer-events:none!important;visibility:hidden}
 .start-screen{align-items:flex-start;text-align:left;padding-left:clamp(24px,8vw,110px)}
 .eyebrow{margin:0 0 10px;color:#c54c3a;letter-spacing:.22em;font-size:12px;font-weight:900}
@@ -135,3 +140,21 @@ footer{min-height:56px;padding:0 clamp(18px,4vw,56px);display:flex;align-items:c
     right:max(1.5vw,env(safe-area-inset-right));
   }
 }
+
+/* ゲームひろば：夜のお散歩編 */
+.game-card{text-decoration:none}
+.night-card-art{background:linear-gradient(145deg,#182756,#674a83)}
+.night-card-art img{filter:brightness(.75) saturate(.8);object-position:center 42%}
+.night-card-art::after{content:"🌙";position:absolute;left:8px;top:6px;font-size:32px;filter:drop-shadow(0 2px 3px #10162b)}
+@media(max-width:950px) and (orientation:landscape){
+  .game-grid{grid-template-columns:repeat(2,minmax(128px,150px))}
+}
+
+/* ゲームひろば：たるとの大冒険3 */
+.mayu-game-card{min-width:190px}
+.mayu-card-art{height:178px;background:linear-gradient(145deg,#ef9c83,#795281)}
+.mayu-card-art::before{content:"";position:absolute;z-index:2;left:-10px;bottom:3px;width:112px;height:96px;background:url("assets/taruto-card-v1.png") center/contain no-repeat;filter:drop-shadow(0 4px 3px #39294177)}
+.game-card-art .mayu-card-person{position:absolute;z-index:1;right:3px;bottom:2px;width:136px;height:156px;object-fit:contain;object-position:center center;filter:drop-shadow(0 4px 3px #39294166)}
+.mayu-card-art i{z-index:4;right:7px;bottom:7px;display:grid;place-items:center;width:48px;height:48px;padding:0;border-radius:0;background:#e33f43;color:#fff7cf;font-size:9px;letter-spacing:.08em;clip-path:polygon(50% 0,60% 17%,75% 5%,79% 25%,98% 21%,86% 39%,100% 50%,83% 59%,95% 75%,75% 78%,79% 98%,60% 85%,50% 100%,40% 83%,25% 95%,21% 75%,2% 79%,15% 60%,0 50%,17% 40%,5% 25%,25% 21%,21% 2%,40% 16%);filter:drop-shadow(0 3px 2px #34283d99);text-shadow:0 1px 0 #8d202a}
+@media(max-width:950px) and (orientation:landscape){.mayu-game-card{min-width:150px}.mayu-card-art{height:min(39dvh,142px)}.game-card-art .mayu-card-person{right:3px;bottom:3px;width:108px;height:124px}.mayu-card-art::before{left:-7px;bottom:3px;width:88px;height:75px}}
+@media(max-width:950px) and (orientation:landscape){.mayu-card-art i{width:42px;height:42px;font-size:8px}}
