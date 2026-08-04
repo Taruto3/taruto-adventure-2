@@ -131,8 +131,11 @@ function goHome(){
 }
 $("#startBtn").onclick=showStory;$("#storyBtn").onclick=start;$("#retryBtn").onclick=start;$("#playRetryBtn").onclick=start;$("#playHomeBtn").onclick=goHome;
 $("#soundBtn").onclick=()=>{sound=!sound;$("#soundBtn").classList.toggle("off",!sound);syncMusic()};
+const changelogModal=$("#changelogModal"),openChangelog=()=>changelogModal.classList.remove("hidden"),closeChangelog=()=>changelogModal.classList.add("hidden");
+$("#versionBadge").onclick=openChangelog;$("#changelogClose").onclick=closeChangelog;$("#changelogBackdrop").onclick=closeChangelog;
 
 addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&!changelogModal.classList.contains("hidden")){closeChangelog();e.preventDefault();return}
   if([" ","ArrowUp","w","W"].includes(e.key)){keys.jump=true;e.preventDefault()}
   if(["x","X","k","K"].includes(e.key)){keys.attack=true;e.preventDefault()}
 });
