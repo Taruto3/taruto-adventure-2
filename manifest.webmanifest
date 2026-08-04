@@ -1,8 +1,10 @@
 {
-  "name": "たるとの大冒険2",
-  "short_name": "たると2",
-  "description": "ポメラニアンのたるとが主人公の横スクロールゲーム",
+  "id": "./",
+  "name": "たるとのゲームひろば",
+  "short_name": "たるとゲーム広場",
+  "description": "たるとと仲間たちのゲームを集めたゲームひろば",
   "start_url": "./",
+  "scope": "./",
   "display": "fullscreen",
   "orientation": "landscape",
   "background_color": "#fff8e9",

@@ -126,7 +126,7 @@ function sfx(name){
 }
 function playBgm(){const bgm=$("#bgm");bgm.volume=.28;bgm.currentTime=0;bgm.play().catch(()=>{})}
 function showMessage(text,duration=850){actionMessage=text;actionMessageUntil=performance.now()+duration;const el=$("#message");el.classList.add("hidden");clearTimeout(messageTimer);messageTimer=setTimeout(()=>{actionMessage="";actionMessageUntil=0},duration)}
-async function fullscreen(){try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen({navigationUI:"hide"})}catch(_){}try{if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock("landscape")}catch(_){}}
+async function fullscreen(){const standalone=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;try{if(standalone&&screen.orientation&&screen.orientation.lock)await screen.orientation.lock("landscape")}catch(_){}}
 function showStory(){fullscreen();$("#titleScreen").classList.add("hidden");const story=$("#storyScreen");story.classList.remove("hidden","story-playing");void story.offsetWidth;story.classList.add("story-playing")}
 function startMapDebug(){fullscreen();mapDebugMode=true;mapDebugPan=0;mapDebugDragX=null;running=false;paused=false;camera=0;$("#titleScreen").classList.add("hidden");$("#storyScreen").classList.add("hidden");$("#resultScreen").classList.add("hidden");$("#hud").classList.add("hidden");$("#mobileControls").classList.add("hidden");$("#mapDebugControls").classList.remove("hidden");updateMapDebugPosition()}
 function stopMapDebug(){mapDebugMode=false;mapDebugPan=0;mapDebugDragX=null;$("#mapDebugControls").classList.add("hidden");$("#titleScreen").classList.remove("hidden")}

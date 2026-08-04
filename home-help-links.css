@@ -1,0 +1,56 @@
+.fullscreen-help-links {
+  position: absolute;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  gap: 8px;
+  z-index: 4;
+}
+
+.fullscreen-help-links .iphone-help-link,
+.fullscreen-help-links .android-help-link {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid #fff8e9c9;
+  border-radius: 99px;
+  background: #183b3abf;
+  color: #fff8e9;
+  text-decoration: none;
+  box-shadow: 0 5px 15px #183b3a3d;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.fullscreen-help-links a span {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff8e9;
+  color: #183b3a;
+  font-size: 12px;
+}
+
+.fullscreen-help-links a:active { transform: translateY(2px); }
+
+@media (max-width: 950px) and (orientation: landscape) {
+  .fullscreen-help-links {
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(8px, env(safe-area-inset-bottom));
+    gap: 5px;
+  }
+  .fullscreen-help-links .iphone-help-link,
+  .fullscreen-help-links .android-help-link {
+    padding: 5px 9px;
+    font-size: 7px;
+  }
+  .fullscreen-help-links a span {
+    width: 17px;
+    height: 17px;
+    font-size: 10px;
+  }
+}

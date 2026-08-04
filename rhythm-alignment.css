@@ -1,0 +1,14 @@
+.lane-controls {
+  left: 50%;
+  top: calc(50% + min(31.25dvh, 17.578125vw));
+  bottom: auto;
+  width: min(48.4375vw, 86.111111dvh);
+  transform: translate(-50%, -50%);
+  gap: min(.625vw, 1.111111dvh);
+}
+
+@media (max-width: 950px) and (orientation: landscape) {
+  .lane-controls {
+    width: min(48.4375vw, 86.111111dvh);
+  }
+}

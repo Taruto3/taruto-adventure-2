@@ -18,6 +18,10 @@ function loadMayuHighScore(){
   try{return Math.max(0,Number(localStorage.getItem(MAYU_HIGH_SCORE_KEY))||0)}
   catch(_){return 0}
 }
+function loadMuscleHighScore(){
+  try{return Math.max(...[0,1,2,3,4].map(level=>Number(localStorage.getItem(`taruto-muscle-beat-best-${level}`))||0))}
+  catch(_){return 0}
+}
 let highScore=loadHighScore();
 
 const FINAL_SHIFT=84;
@@ -95,16 +99,12 @@ function updateHud(){
   $("#boneHud").textContent=`${bones}/${items.filter(item=>item.type==="bone").length}`;
   $("#highScoreValue").textContent=highScore.toLocaleString("ja-JP");
   $("#mayuHighScoreValue").textContent=loadMayuHighScore().toLocaleString("ja-JP");
+  $("#muscleHighScoreValue").textContent=loadMuscleHighScore().toLocaleString("ja-JP");
 }
 async function enterGameMode(){
-  const root=document.documentElement;
+  const standalone=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
   try{
-    if(!document.fullscreenElement){
-      if(root.requestFullscreen)await root.requestFullscreen({navigationUI:"hide"});
-      else if(root.webkitRequestFullscreen)root.webkitRequestFullscreen();
-    }
-  }catch(_){}
-  try{
+    if(!standalone)return;
     if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock("landscape");
   }catch(_){}
   setTimeout(()=>window.scrollTo(0,1),120);
