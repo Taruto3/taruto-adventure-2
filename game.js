@@ -19,7 +19,7 @@ function loadMayuHighScore(){
   catch(_){return 0}
 }
 function loadMuscleHighScore(){
-  try{return Math.max(...[0,1,2,3,4].map(level=>Number(localStorage.getItem(`taruto-muscle-beat-best-${level}`))||0))}
+  try{return Math.max(...[0,1].flatMap(song=>[0,1,2,3,4].map(level=>Number(localStorage.getItem(`taruto-rhythm-party-best-${song}-${level}`))||0)),...[0,1,2,3,4].map(level=>Number(localStorage.getItem(`taruto-muscle-beat-best-${level}`))||0))}
   catch(_){return 0}
 }
 let highScore=loadHighScore();

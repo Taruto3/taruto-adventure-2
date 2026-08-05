@@ -1,0 +1,26 @@
+.muscle-card-kouki {
+  right: 8px;
+  bottom: 9px;
+  width: 82px;
+  height: 86px;
+  border: 3px solid #fff;
+  border-radius: 24px;
+  background: #fff7d9e8;
+  color: #6d435d;
+  font-size: 31px;
+  line-height: 1.05;
+  filter: drop-shadow(0 5px 5px #27152d66);
+}
+
+.muscle-game-card strong { color: #bd3e71; }
+
+@media (max-width: 950px) and (orientation: landscape) {
+  .muscle-card-kouki {
+    right: 4px;
+    bottom: 4px;
+    width: 62px;
+    height: 68px;
+    border-radius: 18px;
+    font-size: 23px;
+  }
+}

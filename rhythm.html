@@ -3,52 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#17152d">
+  <meta name="theme-color" content="#ff8ab3">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>たるとのマッスルビート</title>
-  <link rel="stylesheet" href="rhythm.css?v=2">
-  <link rel="stylesheet" href="rhythm-alignment.css?v=1">
+  <title>たるとのリズムパーティ</title>
+  <link rel="stylesheet" href="rhythm.css?v=3">
+  <link rel="stylesheet" href="rhythm-details.css?v=5">
 </head>
 <body>
   <main class="rhythm-shell">
-    <canvas id="rhythmGame" width="1280" height="720" aria-label="たるとのマッスルビート"></canvas>
+    <canvas id="rhythmGame" width="1280" height="720" aria-label="たるとのリズムパーティ"></canvas>
+
     <section id="rhythmTitle" class="rhythm-screen title-screen">
       <div class="title-copy">
-        <p>TARUTO'S MUSCLE RHYTHM</p>
-        <h1><small>こうき VS たると</small>たるとの<br><strong>マッスルビート</strong></h1>
-        <p class="lead">たるとが投げる筋トレアイテムを、<br>音楽に合わせてキャッチしよう！</p>
-        <div class="difficulty-panel" aria-label="難易度を選択">
-          <button data-level="0" class="selected">EASY<small>★</small></button>
-          <button data-level="1">NORMAL<small>★★</small></button>
-          <button data-level="2">HARD<small>★★★</small></button>
-          <button data-level="3">EXPERT<small>★★★★</small></button>
-          <button data-level="4">MUSCLE MASTER<small>★★★★★</small></button>
+        <p>TARUTO'S RHYTHM PARTY</p>
+        <h1><small>踊ってキャッチ！</small>たるとの<br><strong>リズムパーティ</strong></h1>
+        <p class="lead">人参ちゃんとホネッコをリズムよくキャッチ！<br><em>カモさん成功で1ミスガード！ ゲージ70%以上でクリア！</em></p>
+        <div class="select-step">
+          <b><i>1</i> 音楽を選ぶ</b>
+          <div class="music-panel" aria-label="音楽を選択">
+            <button data-song="0" class="selected">大冒険2<small>たるととカモさん</small></button>
+            <button data-song="1">大冒険3<small>たるとの大暴走</small></button>
+          </div>
         </div>
-        <button id="rhythmStart" class="main-btn" type="button">トレーニング開始！ <b>▶</b></button>
+        <div class="select-step">
+          <b><i>2</i> 難易度を選ぶ</b>
+          <div class="difficulty-panel" aria-label="難易度を選択">
+            <button data-level="0" class="selected">EASY<small>★</small></button>
+            <button data-level="1">NORMAL<small>★★</small></button>
+            <button data-level="2">HARD<small>★★★</small></button>
+            <button data-level="3">EXPERT<small>★★★★</small></button>
+            <button data-level="4">TARUTO MASTER<small>★★★★★</small></button>
+          </div>
+        </div>
+        <button id="rhythmStart" class="main-btn" type="button">ゲームスタート！ <b>▶</b></button>
         <a class="home-link" href="index.html">← ゲームひろばへ</a>
       </div>
       <div class="title-art" aria-hidden="true">
-        <img src="assets/taruto-card-v1.png" alt="">
-        <div class="kouki-art"><span>♬</span><i>💪</i></div>
-        <b>筋トレ用品を<br>キャッチ！</b>
+        <span class="party-note n1">♪</span><span class="party-note n2">♫</span>
+        <img src="assets/taruto-character-v3.png" alt="">
+        <div class="title-items"><span>🥕</span><span>🦴</span><span>🦆</span></div>
+        <b>コンボをつないで<br>フィーバー！</b>
       </div>
     </section>
 
     <section id="rhythmResult" class="rhythm-screen result-screen hidden">
       <div class="result-card">
-        <p>TRAINING RESULT</p>
-        <h2 id="resultTitle">トレーニング完了！</h2>
-        <div class="muscle-result">
-          <div id="resultKouki" class="result-kouki"><span>こうき</span></div>
-          <div class="caught-pile" id="caughtPile"></div>
-          <div class="grade"><small>MUSCLE GRADE</small><strong id="resultGrade">A</strong><b id="muscleName">マッスル高校生</b></div>
+        <p>RHYTHM PARTY RESULT</p>
+        <h2 id="resultTitle">ダンス終了！</h2>
+        <div class="party-result">
+          <div class="result-taruto"><img src="assets/taruto-character-v3.png" alt="踊るたると"><span>♪</span></div>
+          <div class="item-result"><span>🥕 人参ちゃん <b id="carrotCount">0</b></span><span>🦴 ホネッコ <b id="boneCount">0</b></span><span>🦆 カモさん <b id="duckCount">0</b></span></div>
+          <div class="grade"><small>DANCE GRADE</small><strong id="resultGrade">A</strong><b id="danceName">ノリノリたると</b></div>
         </div>
         <div class="result-stats">
           <span>PERFECT <b id="perfectCount">0</b></span><span>GREAT <b id="greatCount">0</b></span>
           <span>GOOD <b id="goodCount">0</b></span><span>MISS <b id="missCount">0</b></span>
-          <span>MAX COMBO <b id="maxComboResult">0</b></span><span>SCORE <b id="finalScore">0</b></span>
+          <span>MAX COMBO <b id="maxComboResult">0</b></span><span>GROOVE <b id="resultGauge">0%</b></span><span>SCORE <b id="finalScore">0</b></span>
         </div>
         <div class="result-actions"><button id="rhythmRetry" class="main-btn" type="button">もう一度 <b>↻</b></button><a href="index.html">ゲームひろばへ</a></div>
       </div>
@@ -60,16 +72,19 @@
       <div><small>COMBO</small><b id="rhythmCombo">0</b></div>
       <div><small>BEST</small><b id="rhythmBest">0</b></div>
       <div><small>LEVEL</small><b id="rhythmLevel">EASY</b></div>
+      <div id="feverHud" class="fever-pill"><small>FEVER</small><b id="feverValue">READY</b></div>
     </header>
     <div id="judgeText" class="judge-text hidden">PERFECT!</div>
+    <div id="comboBurst" class="combo-burst hidden"><strong id="comboBurstValue">0</strong><span>COMBO!</span></div>
+    <div id="feverBanner" class="fever-banner hidden">FEVER TIME!</div>
     <div id="countdown" class="countdown hidden">3</div>
     <div id="laneControls" class="lane-controls hidden" aria-label="リズムゲーム操作">
-      <button data-lane="0"><b>D</b><small>左</small></button><button data-lane="1"><b>F</b><small>中左</small></button>
-      <button data-lane="2"><b>J</b><small>中右</small></button><button data-lane="3"><b>K</b><small>右</small></button>
+      <button data-lane="0"><b>D</b><small>ピンク</small></button><button data-lane="1"><b>F</b><small>きいろ</small></button>
+      <button data-lane="2"><b>J</b><small>みどり</small></button><button data-lane="3"><b>K</b><small>みずいろ</small></button>
     </div>
-    <audio id="rhythmBgm" src="assets/mayu-kawaii-8bit.mp3?v=1" preload="auto"></audio>
+    <audio id="rhythmBgm" preload="auto"></audio>
     <div class="rotate-notice"><span>↻</span><b>スマホを横向きにしてね</b></div>
   </main>
-  <script src="rhythm.js?v=4"></script>
+  <script src="rhythm.js?v=8"></script>
 </body>
 </html>

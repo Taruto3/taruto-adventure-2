@@ -1,0 +1,53 @@
+.lane-controls button { position: relative; overflow: hidden; }
+.lane-controls button::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 5px;
+  right: 5px;
+  top: 50%;
+  height: 4px;
+  transform: translateY(-50%);
+  border-radius: 99px;
+  background: #fff;
+  box-shadow: 0 1px 0 #68445f;
+}
+.lane-controls button b,
+.lane-controls button small { position: relative; z-index: 2; text-shadow: 0 1px 2px #fff; }
+
+.lane-controls {
+  top: auto;
+  bottom: max(5px, env(safe-area-inset-bottom));
+  width: min(69.375vw, 123.333333dvh);
+  gap: min(1.25vw, 2.222222dvh);
+  transform: translateX(-50%);
+}
+
+.lane-controls button::after { display: none; }
+.lane-controls button { overflow: visible; }
+.lane-controls button::before { content:""; position:absolute; z-index:4; left:0; right:0; bottom:0; height:150%; }
+
+.combo-burst {
+  position: absolute;
+  z-index: 9;
+  left: 50%;
+  top: 37%;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  pointer-events: none;
+  filter: drop-shadow(0 5px 0 #8b3f79) drop-shadow(0 0 15px #fff);
+  animation: comboPop .2s ease-out;
+}
+.combo-burst strong { font-size: clamp(58px, 9vw, 112px); line-height: .75; -webkit-text-stroke: 3px #8b3f79; }
+.combo-burst span { margin-top: 9px; color: #fff074; font-size: clamp(14px, 2.2vw, 27px); font-weight: 900; letter-spacing: .18em; }
+.combo-burst.hot strong { color: #fff074; text-shadow: 0 0 22px #ff7bab; }
+.combo-burst.super { animation: comboSuper .35s ease-out, comboGlow .55s infinite alternate; }
+.combo-burst.super strong { color: #85f4dc; -webkit-text-stroke-color: #d54f8a; }
+.combo-burst.ultra strong { color: #fff; text-shadow: 0 0 12px #fff, 0 0 28px #ffeb5f, 0 0 46px #ff5ba0; }
+.combo-burst.ultra span { color: #8ff5e0; }
+
+@keyframes comboPop { from { transform: translate(-50%,-50%) scale(.55); } to { transform: translate(-50%,-50%) scale(1); } }
+@keyframes comboSuper { from { transform: translate(-50%,-50%) rotate(-7deg) scale(.4); } to { transform: translate(-50%,-50%) rotate(0) scale(1); } }
+@keyframes comboGlow { to { filter: drop-shadow(0 7px 0 #8b3f79) drop-shadow(0 0 28px #fff074); } }
